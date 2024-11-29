@@ -112,4 +112,96 @@ def owner_dashboard(request):
     }
     return render(request, "inventory/owner_dashboard.html", context)
 
+from .models import Customer, Supplier
+
+# View for adding a customer
+def add_customer(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        address = request.POST.get("address")
+
+        # Save the customer
+        Customer.objects.create(name=name, contact=contact, address=address)
+        return redirect("customer_list")  # Redirect to customer list
+    return render(request, "inventory/add_customer.html")
+
+# View for listing customers
+def customer_list(request):
+    customers = Customer.objects.all()
+    return render(request, "inventory/customer_list.html", {"customers": customers})
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Product, Supplier, SupplierProduct
+
+# Add or update product supplied by a supplier
+def add_supplier_product(request):
+    suppliers = Supplier.objects.all()
+    if request.method == "POST":
+        supplier_id = request.POST.get("supplier")
+        product_name = request.POST.get("product_name")
+        category = request.POST.get("category")
+        price_per_unit = request.POST.get("price_per_unit")  # Selling price
+        quantity_supplied = int(request.POST.get("quantity_supplied"))
+        cost_price = request.POST.get("cost_price")
+
+        # Fetch or create the product
+        product, created = Product.objects.get_or_create(
+            name=product_name,
+            defaults={"category": category, "price_per_unit": price_per_unit},
+        )
+
+        if not created and price_per_unit:
+            product.price_per_unit = price_per_unit  # Update selling price if provided
+            product.save()
+
+        supplier = get_object_or_404(Supplier, id=supplier_id)
+
+        # Save supplier-product relationship
+        SupplierProduct.objects.create(
+            supplier=supplier,
+            product=product,
+            quantity_supplied=quantity_supplied,
+            cost_price=cost_price,
+        )
+
+        # Update stock quantity
+        product.stock_quantity += quantity_supplied
+        product.save()
+
+        return redirect("supplier_product_list")  # Redirect to the supplier product list
+
+    return render(request, "inventory/add_supplier_product.html", {"suppliers": suppliers})
+
+# List all products supplied by suppliers
+def supplier_product_list(request):
+    supplier_products = SupplierProduct.objects.select_related("supplier", "product")
+    return render(request, "inventory/supplier_product_list.html", {"supplier_products": supplier_products})
+
+
+from .models import Supplier
+
+# View to add a supplier
+def add_supplier(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        contact = request.POST.get("contact")
+        address = request.POST.get("address")
+        company = request.POST.get("company")
+
+        # Save the supplier
+        Supplier.objects.create(
+            name=name,
+            contact=contact,
+            address=address,
+            company=company
+        )
+        return redirect("supplier_list")  # Redirect to the supplier list
+    return render(request, "inventory/add_supplier.html")
+
+
+# View to list all suppliers
+def supplier_list(request):
+    suppliers = Supplier.objects.all()
+    return render(request, "inventory/supplier_list.html", {"suppliers": suppliers})
 

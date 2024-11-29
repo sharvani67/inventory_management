@@ -1,0 +1,28 @@
+<h2>Add or Update Product Supplied by a Supplier</h2>
+<form method="POST">
+    {% csrf_token %}
+    <label>Supplier:</label>
+    <select name="supplier" required>
+        {% for supplier in suppliers %}
+        <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+        {% endfor %}
+    </select><br>
+
+    <label>Product Name:</label>
+    <input type="text" name="product_name" required><br>
+
+    <label>Category:</label>
+    <input type="text" name="category"><br>
+
+    <label>Selling Price per Unit:</label>
+    <input type="text" name="price_per_unit"><br>
+
+    <label>Quantity Supplied:</label>
+    <input type="number" name="quantity_supplied" min="1" required><br>
+
+    <label>Cost Price:</label>
+    <input type="text" name="cost_price" required><br>
+
+    <button type="submit">Add or Update</button>
+</form>
+<a href="{% url 'supplier_product_list' %}">View Supplied Products</a>

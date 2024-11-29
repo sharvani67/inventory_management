@@ -40,11 +40,30 @@ class Sale(models.Model):
 # Model for Customer information
 class Customer(models.Model):
     name = models.CharField(max_length=100)  # Customer name
-    contact = models.CharField(max_length=15, blank=True, null=True)  # Contact number
-    email = models.EmailField(blank=True, null=True)  # Email address
+    contact = models.CharField(max_length=15, blank=True, null=True)  # Phone or email
+    address = models.TextField(blank=True, null=True)  # Address
 
     def __str__(self):
         return self.name
     
 
+# Supplier Model
+class Supplier(models.Model):
+    name = models.CharField(max_length=100)  # Supplier name
+    contact = models.CharField(max_length=15, blank=True, null=True)  # Contact details
+    address = models.TextField(blank=True, null=True)  # Address
+    company = models.CharField(max_length=100, blank=True, null=True)  # Company name
 
+    def __str__(self):
+        return self.name
+
+# SupplierProduct Model
+class SupplierProduct(models.Model):
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)  # Link to Supplier
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)  # Link to Product
+    quantity_supplied = models.IntegerField()  # Quantity supplied
+    cost_price = models.DecimalField(max_digits=10, decimal_places=2)  # Cost price per unit
+    supplied_date = models.DateField(auto_now_add=True)  # Date of supply
+
+    def __str__(self):
+        return f"{self.product.name} supplied by {self.supplier.name}"
