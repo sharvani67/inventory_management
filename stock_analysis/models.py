@@ -3,6 +3,7 @@
 # Create your models here.
 from django.db import models
 from django.utils.timezone import now
+from decimal import Decimal
 
 # Model for Product details
 class Product(models.Model):
@@ -24,10 +25,15 @@ class Sale(models.Model):
     profit = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)  # Profit for this sale
     sale_date = models.DateTimeField(default=now)
 
+
     def save(self, *args, **kwargs):
-        # Calculate profit as revenue minus cost (assuming cost is 80% of price_per_unit)
-        cost_price = self.product.price_per_unit * 0.8
-        self.profit = (self.product.price_per_unit - cost_price) * self.quantity_sold
+        # Convert 0.8 to Decimal
+        cost_price_per_unit = self.product.price_per_unit * Decimal('0.8')
+
+        # Calculate profit using Decimal for accuracy
+        profit_per_unit = self.product.price_per_unit - cost_price_per_unit
+        self.profit = profit_per_unit * self.quantity_sold
+
         super().save(*args, **kwargs)
 
 
