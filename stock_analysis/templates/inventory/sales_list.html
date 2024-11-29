@@ -1,0 +1,18 @@
+<h2>Sales List</h2>
+<table border="1">
+    <tr>
+        <th>Product</th>
+        <th>Quantity Sold</th>
+        <th>Total Price</th>
+        <th>Sale Date</th>
+    </tr>
+    {% for sale in sales %}
+    <tr>
+        <td>{{ sale.product.name }}</td>
+        <td>{{ sale.quantity_sold }}</td>
+        <td>{{ sale.total_price }}</td>
+        <td>{{ sale.sale_date }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'add_sale' %}">Add Sale</a>

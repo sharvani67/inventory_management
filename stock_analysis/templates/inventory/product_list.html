@@ -1,0 +1,18 @@
+<h2>Product List</h2>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Stock Quantity</th>
+        <th>Price Per Unit</th>
+    </tr>
+    {% for product in products %}
+    <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.category }}</td>
+        <td>{{ product.stock_quantity }}</td>
+        <td>{{ product.price_per_unit }}</td>
+    </tr>
+    {% endfor %}
+</table>
+<a href="{% url 'add_product' %}">Add Product</a>

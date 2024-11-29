@@ -1,0 +1,16 @@
+<h2>Add Sale</h2>
+<form method="POST">
+    {% csrf_token %}
+    <label>Product:</label>
+    <select name="product">
+        {% for product in products %}
+        <option value="{{ product.id }}">{{ product.name }}</option>
+        {% endfor %}
+    </select><br>
+    <label>Quantity Sold:</label><input type="number" name="quantity_sold" required><br>
+    <button type="submit">Add Sale</button>
+</form>
+{% if error %}
+<p style="color: red;">{{ error }}</p>
+{% endif %}
+<a href="{% url 'sales_list' %}">Back to Sales List</a>

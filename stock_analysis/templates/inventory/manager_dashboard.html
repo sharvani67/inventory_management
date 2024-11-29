@@ -1,0 +1,22 @@
+<h2>Manager Dashboard</h2>
+
+<h3>Low Stock Products</h3>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Stock Quantity</th>
+    </tr>
+    {% for product in low_stock_products %}
+    <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.stock_quantity }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<h3>Sales Analysis</h3>
+<ul>
+    <li>Daily Sales: ₹{{ daily_sales }}</li>
+    <li>Weekly Sales: ₹{{ weekly_sales }}</li>
+    <li>Monthly Sales: ₹{{ monthly_sales }}</li>
+</ul>
