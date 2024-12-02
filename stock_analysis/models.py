@@ -43,27 +43,23 @@ class Sale(models.Model):
     sale_date = models.DateTimeField(default=now)
 
     def save(self, *args, **kwargs):
-        # Ensure both prices are Decimal for accurate calculation
-        our_selling_price = Decimal(self.our_selling_price_per_unit)
-        cost_price = Decimal(self.supplier_product.cost_price)
-
         # Calculate total price
-        self.total_price = our_selling_price * self.quantity_sold
+        self.total_price = self.our_selling_price_per_unit * self.quantity_sold
 
-        # Calculate profit
-        profit_per_unit = our_selling_price - cost_price
+        # Get selling price per unit from SupplierProduct
+        supplier_selling_price = float(self.supplier_product.selling_price_per_unit)
+
+        # Calculate profit per unit and total profit
+        profit_per_unit = self.our_selling_price_per_unit - supplier_selling_price
         self.profit = profit_per_unit * self.quantity_sold
 
-        # Reduce stock quantity in SupplierProduct
+        # Check stock availability
         if self.quantity_sold > self.supplier_product.stock_quantity:
             raise ValueError("Not enough stock to complete the sale.")
         self.supplier_product.stock_quantity -= self.quantity_sold
         self.supplier_product.save()
 
         super().save(*args, **kwargs)
-
-
-
 
 # Model for Customer information
 class Customer(models.Model):

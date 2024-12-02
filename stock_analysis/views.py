@@ -89,12 +89,12 @@ def add_sale(request):
         supplier_product = SupplierProduct.objects.get(id=supplier_product_id)
 
         if supplier_product.stock_quantity >= quantity_sold:
-            # Convert the cost_price to float to ensure both operands are of the same type (float)
-            cost_price = float(supplier_product.cost_price)  # Convert Decimal to float
+            # Get supplier's selling price per unit
+            supplier_selling_price = float(supplier_product.selling_price_per_unit)
 
             # Calculate total price and profit
             total_price = quantity_sold * our_selling_price_per_unit
-            profit = (our_selling_price_per_unit - cost_price) * quantity_sold
+            profit = (our_selling_price_per_unit - supplier_selling_price) * quantity_sold
 
             # Save the sale
             Sale.objects.create(
@@ -118,7 +118,6 @@ def add_sale(request):
             })
 
     return render(request, "inventory/add_sale.html", {"supplier_products": supplier_products})
-
 
 # List all sales
 def sales_list(request):
