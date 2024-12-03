@@ -1,164 +1,6 @@
-
-
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Sale, Supplier, SupplierProduct,Customer
-from django.utils.timezone import now
-from django.db.models import Sum
 from datetime import datetime, timedelta
-
-from .models import Supplier
-# View to add a supplier
-def add_supplier(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        contact = request.POST.get("contact")
-        email = request.POST.get("email")
-        address = request.POST.get("address")
-        company = request.POST.get("company")
-        date = request.POST.get("date") or None
-
-        # Save the supplier
-        Supplier.objects.create(
-            name=name,
-            contact=contact,
-            email=email,
-            address=address,
-            company=company,
-            partnership_date=date
-        )
-        return redirect("supplier_list")  # Redirect to the supplier list
-
-    return render(request, "inventory/add_supplier.html")
-
-
-
-# View to list all suppliers
-def supplier_list(request):
-    suppliers = Supplier.objects.all()
-    return render(request, "inventory/supplier_list.html", {"suppliers": suppliers})
-
-
-# Add or update product supplied by a supplier
-def add_supplier_product(request):
-    suppliers = Supplier.objects.all()
-    if request.method == "POST":
-        supplier_id = request.POST.get("supplier")
-        product_name = request.POST.get("product_name")
-        selling_price_per_unit = request.POST.get("price_per_unit")
-        category = request.POST.get("category")
-        cost_price = request.POST.get("cost_price")
-        quantity_supplied = int(request.POST.get("quantity_supplied"))
-
-        supplier = get_object_or_404(Supplier, id=supplier_id)
-
-        # Check if the product already exists for the supplier
-        supplier_product, created = SupplierProduct.objects.get_or_create(
-            supplier=supplier,
-            name=product_name,
-            defaults={
-                "category": category,
-                "selling_price_per_unit": selling_price_per_unit,
-                "cost_price": cost_price,
-                "stock_quantity": quantity_supplied,
-            }
-        )
-
-        if not created:
-            # Update stock if the product already exists
-            supplier_product.stock_quantity += quantity_supplied
-            supplier_product.selling_price_per_unit = selling_price_per_unit
-            supplier_product.cost_price = cost_price
-            supplier_product.save()
-
-        return redirect("supplier_product_list")  # Redirect to supplier product list
-
-    return render(request, "inventory/add_supplier_product.html", {"suppliers": suppliers})
-
-
-
-
-# List all products supplied by suppliers
-def supplier_product_list(request):
-    supplier_products = SupplierProduct.objects.select_related("supplier")
-    return render(request, "inventory/supplier_product_list.html", {"supplier_products": supplier_products})
-
-from decimal import Decimal
-from django.shortcuts import render, redirect, get_object_or_404
-from django.utils.timezone import now
-from .models import SupplierProduct, Sale
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Sum
-from .models import SupplierProduct, Sale
-from django.utils.timezone import now
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.db.models import Sum
-from .models import SupplierProduct, Sale
-from django.utils.timezone import now
-
-def add_sale(request):
-    # Fetch all supplier products
-    supplier_products = SupplierProduct.objects.all()
-
-    # Calculate remaining stock for each product
-    for product in supplier_products:
-        # Get total quantity supplied and total quantity sold for the product
-        total_supplied = product.stock_quantity
-        total_sold = Sale.objects.filter(supplier_product=product).aggregate(Sum('quantity_sold'))['quantity_sold__sum'] or 0
-        product.remaining_stock = total_supplied - total_sold
-
-    if request.method == "POST":
-        supplier_product_id = request.POST.get("supplier_product")
-        quantity_sold = int(request.POST.get("quantity_sold"))
-        our_selling_price_per_unit = float(request.POST.get("our_selling_price_per_unit"))
-
-        supplier_product = get_object_or_404(SupplierProduct, id=supplier_product_id)
-
-        # Calculate available stock for the selected product
-        total_supplied = supplier_product.stock_quantity
-        total_sold = Sale.objects.filter(supplier_product=supplier_product).aggregate(Sum('quantity_sold'))['quantity_sold__sum'] or 0
-        remaining_stock = total_supplied - total_sold
-
-        # Check if the quantity sold exceeds the available stock
-        if quantity_sold > remaining_stock:
-            # Return a warning message if not enough stock is available
-            error_message = f"Not enough stock! Only {remaining_stock} items available."
-            return render(request, "inventory/add_sale.html", {"supplier_products": supplier_products, "error_message": error_message})
-
-        # Get supplier's selling price per unit
-        supplier_selling_price = float(supplier_product.selling_price_per_unit)
-
-        # Calculate total price and profit
-        total_price = quantity_sold * our_selling_price_per_unit
-        profit = (our_selling_price_per_unit - supplier_selling_price) * quantity_sold
-
-        # Save the sale record
-        Sale.objects.create(
-            supplier_product=supplier_product,
-            quantity_sold=quantity_sold,
-            our_selling_price_per_unit=our_selling_price_per_unit,
-            total_price=total_price,
-            profit=profit,
-            sale_date=now()
-        )
-
-        # After the sale, update the remaining stock of the product
-        supplier_product.remaining_stock = remaining_stock - quantity_sold
-        supplier_product.save()
-
-        # Redirect to sales list after saving the sale
-        return redirect("sales_list")
-
-    return render(request, "inventory/add_sale.html", {"supplier_products": supplier_products, "error_message": ""})
-
-
-
-# List all sales
-def sales_list(request):
-    sales = Sale.objects.select_related("supplier_product__supplier")
-    return render(request, "inventory/sales_list.html", {"sales": sales})
-
+from .models import SupplierProduct,Sale
+from django.shortcuts import render
 
 # Manager Dashboard
 def manager_dashboard(request):
@@ -174,7 +16,7 @@ def manager_dashboard(request):
     weekly_sales = Sale.objects.filter(sale_date__date__gte=start_of_week).aggregate(total=Sum('total_price'))['total'] or 0
     monthly_sales = Sale.objects.filter(sale_date__date__gte=start_of_month).aggregate(total=Sum('total_price'))['total'] or 0
 
-    return render(request, "inventory/manager_dashboard.html", {
+    return render(request, "manager_dashboard.html", {
         "low_stock_products": low_stock_products,
         "daily_sales": daily_sales,
         "weekly_sales": weekly_sales,
@@ -194,30 +36,13 @@ def owner_dashboard(request):
     yearly_revenue = Sale.objects.filter(sale_date__date__gte=start_of_year).aggregate(total=Sum('total_price'))['total'] or 0
     yearly_profit = Sale.objects.filter(sale_date__date__gte=start_of_year).aggregate(total=Sum('profit'))['total'] or 0
 
-    return render(request, "inventory/owner_dashboard.html", {
+    return render(request, "owner_dashboard.html", {
         "monthly_revenue": monthly_revenue,
         "monthly_profit": monthly_profit,
         "yearly_revenue": yearly_revenue,
         "yearly_profit": yearly_profit,
     })
 
-
-# View for adding a customer
-def add_customer(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        contact = request.POST.get("contact")
-        address = request.POST.get("address")
-
-        # Save the customer
-        Customer.objects.create(name=name, contact=contact, address=address)
-        return redirect("customer_list")  # Redirect to customer list
-    return render(request, "inventory/add_customer.html")
-
-# View for listing customers
-def customer_list(request):
-    customers = Customer.objects.all()
-    return render(request, "inventory/customer_list.html", {"customers": customers})
 
 
 from django.db.models import Sum
@@ -232,7 +57,7 @@ def stock_analysis_list(request):
         'quantity_sold',  # Quantity sold (calculated)
         'category',  # Optional: Include category
         'supplier__name',  # Supplier name
-        'cost_price',
+        
     )
     
     # Calculate the quantity supplied (quantity_sold + remaining stock)
@@ -244,9 +69,22 @@ def stock_analysis_list(request):
             "quantity_supplied": sp["stock_quantity"] or 0,
             "quantity_sold": sp["quantity_sold"] or 0,
             "remaining_stock": sp["stock_quantity"] - (sp["quantity_sold"] or 0),
-            "cost_price": sp["cost_price"]
+            
         }
         for sp in supplier_products
     ]
 
-    return render(request, "inventory/stock_analysis_list.html", {"stock_analysis": stock_analysis})
+    return render(request, "stock_analysis_list.html", {"stock_analysis": stock_analysis})
+
+
+# Index view
+def index(request):
+    return render(request, 'index.html')
+
+from .models import Sale
+
+def customer_list(request):
+    # Fetch all sales records, you can filter or order them if needed
+    sales = Sale.objects.all()
+    
+    return render(request, 'customers_list.html', {'sales': sales})

@@ -1,26 +1,24 @@
 from django.urls import path
-from . import views
+from . import sales_views,supplier_views,product_views,views
 
 urlpatterns = [
+    path("index/",views.index,name="index"),
+    path('customer-list/', views.customer_list, name='customer_list'),
     # Sales
-    path("add-sale/", views.add_sale, name="add_sale"),
-    path("sales/", views.sales_list, name="sales_list"),
+    path("add-sale/", sales_views.add_sale, name="add_sale"),
+    path("sales/", sales_views.sales_list, name="sales_list"),
     
     # Dashboards
     path("manager-dashboard/", views.manager_dashboard, name="manager_dashboard"),
     path("owner-dashboard/", views.owner_dashboard, name="owner_dashboard"),
     
-    # Customers
-    path("add-customer/", views.add_customer, name="add_customer"),
-    path("customers/", views.customer_list, name="customer_list"),
-    
     # Supplier Products
-    path("add-supplier-product/", views.add_supplier_product, name="add_supplier_product"),
-    path("supplier-products/", views.supplier_product_list, name="supplier_product_list"),
+    path("add-supplier-product/", product_views.add_supplier_product, name="add_supplier_product"),
+    path("supplier-products/", product_views.supplier_product_list, name="supplier_product_list"),
     
     # Suppliers
-    path("add-supplier/", views.add_supplier, name="add_supplier"),
-    path("suppliers/", views.supplier_list, name="supplier_list"),
+    path("add-supplier/", supplier_views.add_supplier, name="add_supplier"),
+    path("suppliers/", supplier_views.supplier_list, name="supplier_list"),
 
     path('stock-analysis/', views.stock_analysis_list, name='stock_analysis_list'),
 

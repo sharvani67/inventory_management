@@ -1,9 +1,6 @@
-
-
 from django.db import models
 from django.utils.timezone import now
 from decimal import Decimal
-
 
 # Supplier Model
 class Supplier(models.Model):
@@ -31,9 +28,7 @@ class SupplierProduct(models.Model):
     def __str__(self):
         return f"{self.name} from {self.supplier.name}"
 
-
-from decimal import Decimal
-# Sale Model
+# sale model 
 class Sale(models.Model):
     supplier_product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE, null=True, blank=True)
     quantity_sold = models.IntegerField()
@@ -41,9 +36,9 @@ class Sale(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
     profit = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
     sale_date = models.DateTimeField(default=now)
+    customer_name=models.CharField(max_length=100,default="Unknown Customers", blank=True, null=True)
+    customer_mobile=models.CharField(max_length=15, blank=True, null=True)
     
-    
-
     from decimal import Decimal
 
 def save(self, *args, **kwargs):
@@ -61,15 +56,5 @@ def save(self, *args, **kwargs):
     # Do NOT modify stock_quantity in SupplierProduct
     super().save(*args, **kwargs)
 
-
-
-# Model for Customer information
-class Customer(models.Model):
-    name = models.CharField(max_length=100)  # Customer name
-    contact = models.CharField(max_length=15, blank=True, null=True)  # Phone or email
-    address = models.TextField(blank=True, null=True)  # Address
-
-    def __str__(self):
-        return self.name
     
 

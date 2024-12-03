@@ -1,3 +1,8 @@
+{% extends 'index.html' %}
+
+{% block title %}Manager Dashboard{% endblock %}
+
+{% block content %}
 <h2>Manager Dashboard</h2>
 
 <h3>Low Stock Products</h3>
@@ -20,3 +25,4 @@
     <li>Weekly Sales: ₹{{ weekly_sales }}</li>
     <li>Monthly Sales: ₹{{ monthly_sales }}</li>
 </ul>
+{% endblock %}
