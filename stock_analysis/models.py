@@ -33,7 +33,7 @@ class SupplierProduct(models.Model):
 
 
 from decimal import Decimal
-
+# Sale Model
 class Sale(models.Model):
     supplier_product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE, null=True, blank=True)
     quantity_sold = models.IntegerField()
@@ -41,25 +41,27 @@ class Sale(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
     profit = models.DecimalField(max_digits=10, decimal_places=2, editable=False)
     sale_date = models.DateTimeField(default=now)
+    
+    
 
-    def save(self, *args, **kwargs):
-        # Calculate total price
-        self.total_price = self.our_selling_price_per_unit * self.quantity_sold
+    from decimal import Decimal
 
-        # Get selling price per unit from SupplierProduct
-        supplier_selling_price = float(self.supplier_product.selling_price_per_unit)
+def save(self, *args, **kwargs):
+    # Convert our_selling_price_per_unit to Decimal
+    our_selling_price_per_unit = Decimal(self.our_selling_price_per_unit)
 
-        # Calculate profit per unit and total profit
-        profit_per_unit = self.our_selling_price_per_unit - supplier_selling_price
-        self.profit = profit_per_unit * self.quantity_sold
+    # Calculate total price
+    self.total_price = our_selling_price_per_unit * self.quantity_sold
 
-        # Check stock availability
-        if self.quantity_sold > self.supplier_product.stock_quantity:
-            raise ValueError("Not enough stock to complete the sale.")
-        self.supplier_product.stock_quantity -= self.quantity_sold
-        self.supplier_product.save()
+    # Calculate profit
+    cost_price = self.supplier_product.selling_price_per_unit
+    profit_per_unit = our_selling_price_per_unit - cost_price
+    self.profit = profit_per_unit * self.quantity_sold
 
-        super().save(*args, **kwargs)
+    # Do NOT modify stock_quantity in SupplierProduct
+    super().save(*args, **kwargs)
+
+
 
 # Model for Customer information
 class Customer(models.Model):

@@ -21,4 +21,7 @@ urlpatterns = [
     # Suppliers
     path("add-supplier/", views.add_supplier, name="add_supplier"),
     path("suppliers/", views.supplier_list, name="supplier_list"),
+
+    path('stock-analysis/', views.stock_analysis_list, name='stock_analysis_list'),
+
 ]

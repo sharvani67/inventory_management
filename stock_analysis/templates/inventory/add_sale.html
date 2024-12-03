@@ -20,9 +20,11 @@
                 <option value="" disabled selected>Select a Product</option>
                 {% for product in supplier_products %}
                     <option value="{{ product.id }}" 
-                        data-selling-price="{{ product.selling_price_per_unit }}">{{ product.name }}</option>
+                            data-selling-price="{{ product.selling_price_per_unit }}" 
+                            data-stock="{{ product.remaining_stock }}">{{ product.name }}</option>
                 {% endfor %}
             </select>
+            
             <div class="invalid-feedback">Please select a product.</div>
         </div>
 
@@ -31,6 +33,7 @@
             <label for="quantity_sold" class="form-label">Quantity Sold:</label>
             <input type="number" class="form-control" name="quantity_sold" id="quantity_sold" min="1" required oninput="calculateTotalAndProfit()">
             <div class="invalid-feedback">Please enter a quantity sold.</div>
+            <div id="stock-warning" class="text-danger" style="display: none;"></div>
         </div>
 
         <!-- Our Selling Price per Unit -->
@@ -63,52 +66,70 @@
 
 <!-- JavaScript for Calculations -->
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const quantitySoldInput = document.getElementById("quantity_sold");
-    const sellingPriceInput = document.getElementById("our_selling_price_per_unit");
-    const totalPriceInput = document.getElementById("total_price");
-    const profitInput = document.getElementById("profit");
-    let supplierSellingPrice = 0;
-
-    // Update product details when a product is selected
-    function updateProductDetails() {
-        const selectedProduct = document.getElementById("product").selectedOptions[0];
-        supplierSellingPrice = parseFloat(selectedProduct.getAttribute("data-selling-price")) || 0; // Get selling price per unit
-        calculateTotalAndProfit();
-    }
-
-    // Calculate Total Price and Profit
-    function calculateTotalAndProfit() {
-        const quantitySold = parseInt(quantitySoldInput.value) || 0;
-        const ourSellingPricePerUnit = parseFloat(sellingPriceInput.value) || 0;
-
-        if (quantitySold > 0 && ourSellingPricePerUnit > 0) {
-            const totalPrice = quantitySold * ourSellingPricePerUnit;
-            const profit = quantitySold * (ourSellingPricePerUnit - supplierSellingPrice);
-
-            totalPriceInput.value = totalPrice.toFixed(2);
-            profitInput.value = profit.toFixed(2);
-        } else {
-            totalPriceInput.value = "";
-            profitInput.value = "";
+    document.addEventListener("DOMContentLoaded", function () {
+        const quantitySoldInput = document.getElementById("quantity_sold");
+        const sellingPriceInput = document.getElementById("our_selling_price_per_unit");
+        const totalPriceInput = document.getElementById("total_price");
+        const profitInput = document.getElementById("profit");
+        const stockWarning = document.getElementById("stock-warning");
+    
+        let supplierSellingPrice = 0;
+        let availableStock = 0;
+    
+        // Update product details when a product is selected
+        function updateProductDetails() {
+            const selectedProduct = document.getElementById("product").selectedOptions[0];
+            supplierSellingPrice = parseFloat(selectedProduct.getAttribute("data-selling-price")) || 0; // Get selling price per unit
+            availableStock = parseInt(selectedProduct.getAttribute("data-stock")) || 0; // Get available stock
+            stockWarning.style.display = "none"; // Hide warning when product changes
+            calculateTotalAndProfit();
         }
-    }
-
-    // Add event listeners
-    quantitySoldInput.addEventListener("input", calculateTotalAndProfit);
-    sellingPriceInput.addEventListener("input", calculateTotalAndProfit);
-    document.getElementById("product").addEventListener("change", updateProductDetails);
-
-    // Form validation
-    const form = document.querySelector(".needs-validation");
-    form.addEventListener("submit", function (event) {
-        if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
+    
+        // Calculate Total Price and Profit
+        function calculateTotalAndProfit() {
+            const quantitySold = parseInt(quantitySoldInput.value) || 0;
+            const ourSellingPricePerUnit = parseFloat(sellingPriceInput.value) || 0;
+    
+            if (quantitySold > 0 && ourSellingPricePerUnit > 0) {
+                const totalPrice = quantitySold * ourSellingPricePerUnit;
+                const profit = quantitySold * (ourSellingPricePerUnit - supplierSellingPrice);
+    
+                totalPriceInput.value = totalPrice.toFixed(2);
+                profitInput.value = profit.toFixed(2);
+    
+                // Check stock availability
+                if (quantitySold > availableStock) {
+                    stockWarning.style.display = "block";
+                    stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
+                } else {
+                    stockWarning.style.display = "none"; // Hide warning if quantity is valid
+                }
+            } else {
+                totalPriceInput.value = "";
+                profitInput.value = "";
+                stockWarning.style.display = "none"; // Hide warning if input is invalid
+            }
         }
-        form.classList.add("was-validated");
+    
+        // Add event listeners
+        quantitySoldInput.addEventListener("input", calculateTotalAndProfit);
+        sellingPriceInput.addEventListener("input", calculateTotalAndProfit);
+        document.getElementById("product").addEventListener("change", updateProductDetails);
+    
+        // Form validation
+        const form = document.querySelector(".needs-validation");
+        form.addEventListener("submit", function (event) {
+            if (!form.checkValidity() || quantitySoldInput.value > availableStock) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (quantitySoldInput.value > availableStock) {
+                    stockWarning.style.display = "block";
+                    stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
+                }
+            }
+            form.classList.add("was-validated");
+        });
     });
-});
-</script>
+    </script>
 </body>
 </html>
