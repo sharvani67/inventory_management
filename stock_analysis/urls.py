@@ -1,9 +1,13 @@
 from django.urls import path
-from . import sales_views,supplier_views,product_views,views
+from . import sales_views,supplier_views,product_views,registration_views,views
 
 urlpatterns = [
     path("index/",views.index,name="index"),
     path('customer-list/', views.customer_list, name='customer_list'),
+    path('register/', registration_views.register, name='register'),
+    path('login/', registration_views.login_view, name='login'),
+    path('logout/', registration_views.logout_view, name='logout'),
+    
     # Sales
     path("add-sale/", sales_views.add_sale, name="add_sale"),
     path("sales/", sales_views.sales_list, name="sales_list"),

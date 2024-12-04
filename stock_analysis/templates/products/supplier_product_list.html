@@ -3,7 +3,7 @@
 {% block title %} Supplier List{% endblock %}
 
 {% block content %}
-<div class="container mt-5" style="position: relative;">
+<div class="container" style="position: relative;">
     <!-- Supplier Products Table -->
     <h2 class="mb-4">Supplier Products List</h2>
     
@@ -16,6 +16,7 @@
         <table id="supplierTable" class="table table-bordered table-striped">
             <thead class="bg-dark text-white">
                 <tr>
+                    <th>S.No</th>
                     <th>Supplier</th>
                     <th>Product</th>
                     <th>Category</th>
@@ -28,6 +29,7 @@
             <tbody>
                 {% for sp in supplier_products %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>  <!-- Serial Number -->
                     <td>{{ sp.supplier.name }}</td>
                     <td>{{ sp.name }}</td>
                     <td>{{ sp.category }}</td>
