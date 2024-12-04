@@ -52,11 +52,8 @@
 </head>
 <body>
     <div class="navbar">
-        <a href="{% url 'add_supplier' %}" class="{% if request.resolver_match.url_name == 'add_supplier' %}active{% endif %}">Supplier Form</a>
         <a href="{% url 'supplier_list' %}" class="{% if request.resolver_match.url_name == 'supplier_list' %}active{% endif %}">Supplier List</a>
-        <a href="{% url 'add_supplier_product' %}" class="{% if request.resolver_match.url_name == 'add_supplier_product' %}active{% endif %}">Supplier Product Form</a>
         <a href="{% url 'supplier_product_list' %}" class="{% if request.resolver_match.url_name == 'supplier_product_list' %}active{% endif %}">Supplier Product List</a>
-        <a href="{% url 'add_sale' %}" class="{% if request.resolver_match.url_name == 'add_sale' %}active{% endif %}">Sales Form</a>
         <a href="{% url 'sales_list' %}" class="{% if request.resolver_match.url_name == 'sales_list' %}active{% endif %}">Sales List</a>
         <a href="{% url 'stock_analysis_list' %}" class="{% if request.resolver_match.url_name == 'stock_analysis_list' %}active{% endif %}">Stock Analysis</a>
         <a href="{% url 'manager_dashboard' %}" class="{% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}">Manager Dashboard</a>
