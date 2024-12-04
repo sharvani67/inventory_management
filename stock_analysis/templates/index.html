@@ -12,7 +12,7 @@
             font-family: Arial, sans-serif;
         }
         .navbar {
-            width: 250px;
+            width: 200px; /* Reduced width */
             height: 100vh;
             background: linear-gradient(45deg, #007bff, #20c997); /* Gradient blue-teal */
             color: white;
@@ -24,9 +24,10 @@
         .navbar a {
             text-decoration: none;
             color: white;
-            padding: 15px 20px;
+            padding: 10px 15px; /* Reduced padding */
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
             transition: background 0.3s ease, color 0.3s ease;
+            font-size: 0.9rem; /* Smaller font size */
         }
         .navbar a:hover {
             background-color: #31511E; /* Green for hover */
@@ -38,22 +39,25 @@
         }
         .navbar h3 {
             text-align: center;
-            padding: 20px 0;
+            padding: 15px 0; /* Reduced padding */
             margin: 0;
             border-bottom: 2px solid rgba(255, 255, 255, 0.2);
-            font-size: 1.5em;
+            font-size: 1.3em; /* Slightly smaller font size */
         }
         .content {
-            margin-left: 260px;
+            margin-left: 210px; /* Adjusted for reduced navbar width */
             padding: 20px;
-            width: calc(100% - 260px);
+            width: calc(100% - 210px); /* Adjusted for reduced navbar width */
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <a href="{% url 'supplier_list' %}" class="{% if request.resolver_match.url_name == 'supplier_list' %}active{% endif %}">Supplier List</a>
-        <a href="{% url 'supplier_product_list' %}" class="{% if request.resolver_match.url_name == 'supplier_product_list' %}active{% endif %}">Supplier Product List</a>
+        <!--<a href="{% url 'add_supplier' %}" class="{% if request.resolver_match.url_name == 'add_supplier' %}active{% endif %}">Supplier Form</a>-->
+        <a href="{% url 'supplier_list' %}" class="{% if request.resolver_match.url_name == 'supplier_list' %}active{% endif %}">Suppliers</a>
+        <!--<a href="{% url 'add_supplier_product' %}" class="{% if request.resolver_match.url_name == 'add_supplier_product' %}active{% endif %}">Product Form</a>-->
+        <a href="{% url 'supplier_product_list' %}" class="{% if request.resolver_match.url_name == 'supplier_product_list' %}active{% endif %}">Product List</a>
+        <!--<a href="{% url 'add_sale' %}" class="{% if request.resolver_match.url_name == 'add_sale' %}active{% endif %}">Sales Form</a>-->
         <a href="{% url 'sales_list' %}" class="{% if request.resolver_match.url_name == 'sales_list' %}active{% endif %}">Sales List</a>
         <a href="{% url 'stock_analysis_list' %}" class="{% if request.resolver_match.url_name == 'stock_analysis_list' %}active{% endif %}">Stock Analysis</a>
         <a href="{% url 'manager_dashboard' %}" class="{% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}">Manager Dashboard</a>

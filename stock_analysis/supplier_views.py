@@ -24,8 +24,6 @@ def add_supplier(request):
 
     return render(request, "suppliers/add_supplier.html")
 
-
-
 # View to list all suppliers
 def supplier_list(request):
     suppliers = Supplier.objects.all()
