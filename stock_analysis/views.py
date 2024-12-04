@@ -44,37 +44,32 @@ def owner_dashboard(request):
     })
 
 
-
 from django.db.models import Sum
 
 def stock_analysis_list(request):
-    # Annotate SupplierProduct with quantities sold
-    supplier_products = SupplierProduct.objects.annotate(
-        quantity_sold=Sum('sale__quantity_sold')
-    ).values(
-        'name',  # Product name
-        'stock_quantity',  # Remaining stock
-        'quantity_sold',  # Quantity sold (calculated)
-        'category',  # Optional: Include category
-        'supplier__name',  # Supplier name
-        
+    # Aggregate data by product name
+    supplier_products = SupplierProduct.objects.values(
+        'name',  # Group by product name
+        'category'  # Optional: Include category
+    ).annotate(
+        total_quantity_supplied=Sum('stock_quantity'),  # Sum stock for the product across suppliers
+        total_quantity_sold=Sum('sale__quantity_sold'),  # Sum sold quantities for the product
     )
     
-    # Calculate the quantity supplied (quantity_sold + remaining stock)
+    # Prepare stock analysis data for rendering
     stock_analysis = [
         {
             "name": sp["name"],
             "category": sp["category"],
-            "supplier": sp["supplier__name"],
-            "quantity_supplied": sp["stock_quantity"] or 0,
-            "quantity_sold": sp["quantity_sold"] or 0,
-            "remaining_stock": sp["stock_quantity"] - (sp["quantity_sold"] or 0),
-            
+            "quantity_supplied": sp["total_quantity_supplied"] or 0,  # Total quantity supplied for the product
+            "quantity_sold": sp["total_quantity_sold"] or 0,  # Total quantity sold for the product
+            "remaining_stock": (sp["total_quantity_supplied"] or 0) - (sp["total_quantity_sold"] or 0),
         }
         for sp in supplier_products
     ]
 
     return render(request, "stock_analysis_list.html", {"stock_analysis": stock_analysis})
+
 
 
 # Index view

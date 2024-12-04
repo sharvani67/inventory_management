@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect,get_object_or_404
-from .models import SupplierProduct,Supplier
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import SupplierProduct, Supplier
 
-# Add or update product supplied by a supplier
+# Add a new product supplied by a supplier
 def add_supplier_product(request):
     suppliers = Supplier.objects.all()
     if request.method == "POST":
@@ -15,27 +15,29 @@ def add_supplier_product(request):
         supplier = get_object_or_404(Supplier, id=supplier_id)
 
         # Check if the product already exists for the supplier
-        supplier_product, created = SupplierProduct.objects.get_or_create(
+        existing_product = SupplierProduct.objects.filter(
+            supplier=supplier,
+            name=product_name
+        ).exists()
+
+        if existing_product:
+            # Redirect to avoid adding duplicate entries
+            return redirect("supplier_product_list")
+
+        # Create a new product entry
+        SupplierProduct.objects.create(
             supplier=supplier,
             name=product_name,
-            defaults={
-                "category": category,
-                "selling_price_per_unit": selling_price_per_unit,
-                "cost_price": cost_price,
-                "stock_quantity": quantity_supplied,
-            }
+            category=category,
+            selling_price_per_unit=selling_price_per_unit,
+            cost_price=cost_price,
+            stock_quantity=quantity_supplied,
         )
-
-        if not created:
-            # Update stock if the product already exists
-            supplier_product.stock_quantity += quantity_supplied
-            supplier_product.selling_price_per_unit = selling_price_per_unit
-            supplier_product.cost_price = cost_price
-            supplier_product.save()
 
         return redirect("supplier_product_list")  # Redirect to supplier product list
 
     return render(request, "products/add_supplier_product.html", {"suppliers": suppliers})
+
 
 
 # List all products supplied by suppliers
