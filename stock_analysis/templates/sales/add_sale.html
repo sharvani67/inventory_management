@@ -3,68 +3,70 @@
 {% block title %}Add Sale{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Add Sale</h2>
-    <form method="POST" class="needs-validation" novalidate>
+<div class="container mt-4">
+    <h2 class="text-center mb-3" style="color: black">Add Sale</h2>
+
+    <form method="POST" class="needs-validation shadow-sm p-3 bg-light rounded" novalidate>
         {% csrf_token %}
-        <!-- Customer Name -->
-        <div class="mb-3">
-            <label for="customer_name" class="form-label">Customer Name:</label>
-            <input type="text" class="form-control" name="customer_name" id="customer_name" required>
-            <div class="invalid-feedback">Please enter the customer's name.</div>
+
+        <!-- Customer Name and Mobile Number on Same Row -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="customer_name" class="form-label">Customer Name:</label>
+                <input type="text" class="form-control" name="customer_name" id="customer_name" placeholder="Enter customer name" required>
+                <div class="invalid-feedback">Please enter the customer's name.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="customer_mobile" class="form-label">Customer Mobile Number:</label>
+                <input type="tel" class="form-control" name="customer_mobile" id="customer_mobile" pattern="^[0-9]{10}$" placeholder="Enter customer mobile " required>
+                <div class="invalid-feedback">Please enter a valid 10-digit mobile number.</div>
+            </div>
         </div>
 
-        <!-- Customer Mobile Number -->
-        <div class="mb-3">
-            <label for="customer_mobile" class="form-label">Customer Mobile Number:</label>
-            <input type="tel" class="form-control" name="customer_mobile" id="customer_mobile" pattern="^[0-9]{10}$" required>
-            <div class="invalid-feedback">Please enter a valid 10-digit mobile number.</div>
+        <!-- Product and Quantity Sold on Same Row -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="product" class="form-label">Product:</label>
+                <select class="form-select" name="supplier_product" id="product" required onchange="updateProductDetails()">
+                    <option value="" disabled selected>Select a Product</option>
+                    {% for product in supplier_products %}
+                    <option value="{{ product.id }}" 
+                            data-selling-price="{{ product.selling_price_per_unit }}" 
+                            data-stock="{{ product.remaining_stock }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Please select a product.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="quantity_sold" class="form-label">Quantity Sold:</label>
+                <input type="number" class="form-control" name="quantity_sold" id="quantity_sold" min="1" placeholder="Enter quantity sold" required oninput="calculateTotalAndProfit()">
+                <div class="invalid-feedback">Please enter a valid quantity.</div>
+                <div id="stock-warning" class="text-danger" style="display: none;"></div>
+            </div>
         </div>
 
-        <!-- Product Selection -->
-        <div class="mb-3">
-            <label for="product" class="form-label">Product:</label>
-            <select class="form-select" name="supplier_product" id="product" required onchange="updateProductDetails()">
-                <option value="" disabled selected>Select a Product</option>
-                {% for product in supplier_products %}
-                <option value="{{ product.id }}" 
-                        data-selling-price="{{ product.selling_price_per_unit }}" 
-                        data-stock="{{ product.remaining_stock }}">{{ product.name }}</option>
-                {% endfor %}
-            </select>
-            <div class="invalid-feedback">Please select a product.</div>
-        </div>
-
-        <!-- Quantity Sold -->
-        <div class="mb-3">
-            <label for="quantity_sold" class="form-label">Quantity Sold:</label>
-            <input type="number" class="form-control" name="quantity_sold" id="quantity_sold" min="1" required oninput="calculateTotalAndProfit()">
-            <div class="invalid-feedback">Please enter a valid quantity.</div>
-            <div id="stock-warning" class="text-danger" style="display: none;"></div>
-        </div>
-
-        <!-- Our Selling Price per Unit -->
-        <div class="mb-3">
-            <label for="our_selling_price_per_unit" class="form-label">Our Selling Price per Unit:</label>
-            <input type="number" step="0.01" class="form-control" name="our_selling_price_per_unit" id="our_selling_price_per_unit" required oninput="calculateTotalAndProfit()">
-            <div class="invalid-feedback">Please enter a valid selling price.</div>
-        </div>
-
-        <!-- Total Price -->
-        <div class="mb-3">
-            <label for="total_price" class="form-label">Total Price:</label>
-            <input type="text" id="total_price" class="form-control" readonly>
-        </div>
-
-        <!-- Profit -->
-        <div class="mb-3">
-            <label for="profit" class="form-label">Profit:</label>
-            <input type="text" id="profit" class="form-control" readonly>
+        <!-- Our Selling Price, Total Price, and Profit on Same Row -->
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="our_selling_price_per_unit" class="form-label">Our Selling Price per Unit:</label>
+                <input type="number" step="0.01" class="form-control" name="our_selling_price_per_unit" id="our_selling_price_per_unit" placeholder="Enter selling price" required oninput="calculateTotalAndProfit()">
+                <div class="invalid-feedback">Please enter a valid selling price.</div>
+            </div>
+            <div class="col-md-4">
+                <label for="total_price" class="form-label">Total Price:</label>
+                <input type="text" id="total_price" class="form-control" readonly>
+            </div>
+            <div class="col-md-4">
+                <label for="profit" class="form-label">Profit:</label>
+                <input type="text" id="profit" class="form-control" readonly>
+            </div>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Add Sale</button>
-        <a href="{% url 'sales_list' %}" class="btn btn-secondary">Back to Sales List</a>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <button type="submit" class="btn btn-primary btn-sm-2">Add Sale</button>
+            <a href="{% url 'sales_list' %}" class="btn btn-secondary btn-sm-2">Back to Sales List</a>
+        </div>
     </form>
 </div>
 
