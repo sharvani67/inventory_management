@@ -28,3 +28,28 @@ def add_supplier(request):
 def supplier_list(request):
     suppliers = Supplier.objects.all()
     return render(request, "suppliers/supplier_list.html", {"suppliers": suppliers})
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Supplier
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Supplier
+
+def update_supplier(request, pk):
+    supplier = get_object_or_404(Supplier, pk=pk)
+    if request.method == 'POST':
+        supplier.name = request.POST.get('name')
+        supplier.contact = request.POST.get('contact')
+        supplier.email = request.POST.get('email')
+        supplier.address = request.POST.get('address')
+        supplier.company = request.POST.get('company')
+        supplier.date = request.POST.get('date')
+        supplier.save()
+        return redirect('supplier_list')  # Replace 'supplier_list' with the name of your supplier list view
+    return render(request, 'suppliers/update_supplier.html', {'supplier': supplier})
+
+def delete_supplier(request, pk):
+    supplier = get_object_or_404(Supplier, pk=pk)
+    supplier.delete()
+    return redirect('supplier_list')  # Replace 'supplier_list' with the name of your supplier list view

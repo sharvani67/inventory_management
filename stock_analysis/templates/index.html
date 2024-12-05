@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Home{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -12,8 +13,8 @@
             font-family: Arial, sans-serif;
         }
         .navbar {
-            width: 200px; /* Reduced width */
-            height: 100vh;
+            width: 190px; /* Reduced width */
+            height: 95vh;
             background: linear-gradient(45deg, #007bff, #20c997); /* Gradient blue-teal */
             color: white;
             display: flex;
@@ -30,31 +31,40 @@
             font-size: 0.9rem; /* Smaller font size */
         }
         .navbar a:hover {
-            background-color: #31511E; /* Green for hover */
+            background-color: #8dd265; /* Green for hover */
             color: white;
         }
         .navbar a.active {
-            background-color: #441752; /* Orange for active */
+            background-color: #bc2be9; /* Orange for active */
             font-weight: bold;
         }
         .content {
             margin-left: 210px; /* Adjusted for reduced navbar width */
-            padding: 20px;
+            padding: 30px;
             width: calc(100% - 210px); /* Adjusted for reduced navbar width */
         }
         .navbar .section-header {
-            padding: 10px 15px; /* Added padding for the header */
-            font-size: 1.1rem;
-            background-color: #040248; /* Green background for the header */
+            padding: 12px 20px; /* Adjusted padding */
+            font-size: 1.3rem; /* Larger font size */
+            background-color: #a96531; /* Vibrant orange background */
             font-weight: bold;
             text-align: center;
             color: white;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Added box shadow */
+        }
+        .navbar .section-header i {
+            margin-right: 12px; /* Space between the icon and text */
+            font-size: 1.4rem; /* Slightly larger icon */
         }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <h3 class="section-header">Stock Management</h3> <!-- Added heading -->
+        <h3 class="section-header">
+            <i class="fas fa-warehouse"></i> <!-- Advanced stock management icon -->
+            Stock Management
+        </h3> <!-- Added heading -->
         <a href="{% url 'supplier_list' %}" class="{% if request.resolver_match.url_name == 'supplier_list' %}active{% endif %}">Suppliers</a>
         <a href="{% url 'supplier_product_list' %}" class="{% if request.resolver_match.url_name == 'supplier_product_list' %}active{% endif %}">Product List</a>
         <a href="{% url 'sales_list' %}" class="{% if request.resolver_match.url_name == 'sales_list' %}active{% endif %}">Sales List</a>
