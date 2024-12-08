@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import SupplierProduct, Sale, SellingPrice
 from django.db.models import Sum
 from django.utils.timezone import now
+from decimal import Decimal
 
 def add_sale(request):
     # Fetch all supplier products
@@ -9,13 +10,12 @@ def add_sale(request):
 
     # Prepare a dictionary of selling prices for each product
     selling_prices = {
-    product.id: product.selling_price_per_unit
-    for product in supplier_products
-}
+        product.id: product.selling_price_per_unit
+        for product in supplier_products
+    }
 
     # Calculate remaining stock for each product
     for product in supplier_products:
-        # Get total quantity supplied and total quantity sold for the product
         total_supplied = product.stock_quantity
         total_sold = Sale.objects.filter(supplier_product=product).aggregate(Sum('quantity_sold'))['quantity_sold__sum'] or 0
         product.remaining_stock = total_supplied - total_sold
@@ -29,6 +29,14 @@ def add_sale(request):
 
         supplier_product = get_object_or_404(SupplierProduct, id=supplier_product_id)
 
+        # Get the selling price from the SellingPrice model, not SupplierProduct directly
+        selling_price_record = SellingPrice.objects.filter(supplier_product=supplier_product).first()
+        if selling_price_record:
+            our_selling_price_per_unit = selling_price_record.our_selling_price_per_unit
+        else:
+            # If no selling price is found, use the default selling price
+            our_selling_price_per_unit = supplier_product.selling_price_per_unit
+
         # Calculate available stock for the selected product
         total_supplied = supplier_product.stock_quantity
         total_sold = Sale.objects.filter(supplier_product=supplier_product).aggregate(Sum('quantity_sold'))['quantity_sold__sum'] or 0
@@ -36,7 +44,6 @@ def add_sale(request):
 
         # Check if the quantity sold exceeds the available stock
         if quantity_sold > remaining_stock:
-            # Return a warning message if not enough stock is available
             error_message = f"Not enough stock! Only {remaining_stock} items available."
             return render(request, "sales/add_sale.html", {
                 "supplier_products": supplier_products,
@@ -45,7 +52,7 @@ def add_sale(request):
             })
 
         # Get supplier's selling price per unit
-        supplier_selling_price = float(supplier_product.selling_price_per_unit)
+        supplier_selling_price = Decimal(supplier_product.selling_price_per_unit)
 
         # Calculate total price and profit
         total_price = quantity_sold * our_selling_price_per_unit

@@ -14,25 +14,34 @@
             .navbar {
                 background-color: #1E2952; /* Deep Navy Blue */
             }
-            .navbar-brand, .nav-link {
+            .navbar-brand {
+                color: #FFD700 !important; /* Gold Color for Heading */
+                font-weight: bold;
+                font-size: 1.8rem; /* Slightly Larger Font Size */
+                transition: color 0.3s ease-in-out;
+            }
+            .nav-link {
                 color: #FFFFFF !important; /* White Text */
                 transition: color 0.3s ease-in-out;
             }
             .nav-link.active {
                 color: #00D1B2 !important; /* Teal Highlight for Active Link */
-                font-weight: bold; /* Make Active Link Bold */
+                font-weight: bold;
             }
             .nav-link:hover {
                 color: #00D1B2 !important; /* Teal Hover Effect */
             }
             .btn-danger {
-                background-color: #FF6F61 !important; /* Coral Red for Logout Button */
+                background-color: #d92615 !important;
                 border: none;
             }
-            .btn-danger:hover {
-                background-color: #FF3B2F !important; /* Darker Coral Red on Hover */
+            .dropdown-item:hover {
+                background-color: #00D1B2; /* Teal background */
+                color: #FFFFFF !important; /* White text */
+                transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
             }
         </style>
+        
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -54,14 +63,20 @@
                             <a class="nav-link {% if request.resolver_match.url_name == 'add_supplier_product' %}active{% endif %}" href="{% url 'add_supplier_product' %}">Add Products</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'add_selling_price' %}active{% endif %}" href="{% url 'add_selling_price' %}">Add SellingPrice</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'add_sale' %}active{% endif %}" href="{% url 'add_sale' %}">Add Sale</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}" href="{% url 'manager_dashboard' %}">Manager Dashboard</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'owner_dashboard' %}active{% endif %}" href="{% url 'owner_dashboard' %}">Owner Dashboard</a>
-                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Dashboards
+                            </a>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="{% url 'manager_dashboard' %}">Manager Dashboard</a></li>
+                              <li><a class="dropdown-item" href="{% url 'owner_dashboard' %}">Owner Dashboard</a></li>
+                            </ul>
+                          </li>
                         <li class="nav-item">
                             <a class="nav-link btn btn-danger text-white" href="{% url 'logout' %}">Logout</a>
                         </li>
@@ -72,7 +87,7 @@
 
     
     <!-- Welcome Section -->
-    <header class=" text-dark text-center py-5" style="background-color: #FAF6E3;">
+    <header class=" text-dark text-center py-4" style="background-color: #FAF6E3;">
         <div class="container">
             <h1>Welcome to the Inventory Management System</h1>
             <p class="lead">Track, manage, and grow your business efficiently.</p>
@@ -129,6 +144,16 @@
                         <h5 class="card-title">Customers</h5>
                         <p class="card-text">Manage customer details, review purchase history, and build stronger relationships for sustained growth.</p>
                         <a href="{% url 'customer_list' %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Selling Prices</h5>
+                        <p class="card-text">Manage and view all the selling prices for your products. Keep track of price changes and updates easily.</p>
+                        <a href="{% url 'selling_price_list' %}" class="btn btn-primary">View</a>
                     </div>
                 </div>
             </div>

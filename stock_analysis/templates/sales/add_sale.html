@@ -9,7 +9,7 @@
     <form method="POST" class="needs-validation shadow-sm p-3 bg-light rounded" novalidate>
         {% csrf_token %}
 
-        <!-- Customer Name and Mobile Number on Same Row -->
+        <!-- Customer Name and Mobile Number -->
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="customer_name" class="form-label">Customer Name:</label>
@@ -18,43 +18,40 @@
             </div>
             <div class="col-md-6">
                 <label for="customer_mobile" class="form-label">Customer Mobile Number:</label>
-                <input type="tel" class="form-control" name="customer_mobile" id="customer_mobile" pattern="^[0-9]{10}$" placeholder="Enter customer mobile " required>
+                <input type="tel" class="form-control" name="customer_mobile" id="customer_mobile" pattern="^[0-9]{10}$" placeholder="Enter customer mobile" required>
                 <div class="invalid-feedback">Please enter a valid 10-digit mobile number.</div>
             </div>
         </div>
 
-        <!-- Product and Quantity Sold on Same Row -->
+        <!-- Product Selection and Quantity Sold -->
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="product" class="form-label">Product:</label>
-                <select class="form-select" name="supplier_product" id="product" required onchange="updateProductDetails()">
+                <select name="supplier_product" id="product_select" onchange="updateProductDetails()">
                     <option value="" disabled selected>Select a Product</option>
                     {% for product in supplier_products %}
                     <option value="{{ product.id }}" 
-                        data-selling-price="{{ selling_prices|default_if_none:product.id }}" 
-                        data-stock="{{ product.remaining_stock }}">
-                    {{ product.name }}
+                        data-supplier-price="{{ product.selling_price_per_unit }}" 
+                        data-our-price="{% if product.sellingprice_set.first %}{{ product.sellingprice_set.first.our_selling_price_per_unit }}{% else %}{{ product.selling_price_per_unit }}{% endif %}">
+                        {{ product.name }}
                     </option>
-
-
                     {% endfor %}
-                </select>
+                </select>                
                 <div class="invalid-feedback">Please select a product.</div>
             </div>
             <div class="col-md-6">
                 <label for="quantity_sold" class="form-label">Quantity Sold:</label>
-                <input type="number" class="form-control" name="quantity_sold" id="quantity_sold" min="1" placeholder="Enter quantity sold" required oninput="calculateTotalAndProfit()">
+                <input type="number" class="form-control" name="quantity_sold" id="quantity_sold" min="1" placeholder="Enter quantity sold" required>
                 <div class="invalid-feedback">Please enter a valid quantity.</div>
                 <div id="stock-warning" class="text-danger" style="display: none;"></div>
             </div>
         </div>
 
-        <!-- Our Selling Price, Total Price, and Profit on Same Row -->
+        <!-- Selling Price, Total Price, and Profit -->
         <div class="row mb-3">
             <div class="col-md-4">
                 <label for="our_selling_price_per_unit" class="form-label">Our Selling Price per Unit:</label>
-                <input type="number" step="0.01" class="form-control" name="our_selling_price_per_unit" id="our_selling_price_per_unit" placeholder="Enter selling price" required oninput="calculateTotalAndProfit()">
-                <div class="invalid-feedback">Please enter a valid selling price.</div>
+                <input type="number" step="0.01" class="form-control" name="our_selling_price_per_unit" id="our_selling_price_per_unit" readonly>
             </div>
             <div class="col-md-4">
                 <label for="total_price" class="form-label">Total Price:</label>
@@ -80,25 +77,29 @@
 <!-- JavaScript for Validation and Calculations -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const productSelect = document.getElementById("product");
+        const productSelect = document.getElementById("product_select");
         const sellingPriceInput = document.getElementById("our_selling_price_per_unit");
+        const quantitySoldInput = document.getElementById("quantity_sold");
+        const totalPriceInput = document.getElementById("total_price");
+        const profitInput = document.getElementById("profit");
         const stockWarning = document.getElementById("stock-warning");
+
+        let availableStock = 0; // Store the available stock
+        let ownSellingPrice = 0; // Default own selling price for profit calculation
 
         // Update product details when a product is selected
         function updateProductDetails() {
-            const selectedProduct = productSelect.selectedOptions[0];
-            const sellingPrice = parseFloat(selectedProduct.getAttribute("data-selling-price")) || 0;
-            const availableStock = parseInt(selectedProduct.getAttribute("data-stock")) || 0;
+            const selectedProduct = productSelect.selectedOptions[0]; // Get the selected option
+            const supplierPrice = parseFloat(selectedProduct.getAttribute("data-supplier-price")) || 0;
+            ownSellingPrice = parseFloat(selectedProduct.getAttribute("data-our-price")) || 0;
 
-            // Update selling price input field
-            sellingPriceInput.value = sellingPrice.toFixed(2);
+            // Update the selling price input field
+            sellingPriceInput.value = ownSellingPrice.toFixed(2);
 
-            // Hide stock warning by default
-            stockWarning.style.display = "none";
+            // Reset calculations
+            calculateTotalAndProfit();
+            stockWarning.style.display = "none"; // Hide stock warning by default
         }
-
-        productSelect.addEventListener("change", updateProductDetails);
-        
 
         // Calculate Total Price and Profit
         function calculateTotalAndProfit() {
@@ -107,40 +108,19 @@
 
             if (quantitySold > 0 && ourSellingPricePerUnit > 0) {
                 const totalPrice = quantitySold * ourSellingPricePerUnit;
-                const profit = quantitySold * (ourSellingPricePerUnit - supplierSellingPrice);
+                const profit = quantitySold * (ourSellingPricePerUnit - ownSellingPrice);
 
                 totalPriceInput.value = totalPrice.toFixed(2);
                 profitInput.value = profit.toFixed(2);
-
-                if (quantitySold > availableStock) {
-                    stockWarning.style.display = "block";
-                    stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
-                } else {
-                    stockWarning.style.display = "none";
-                }
             } else {
                 totalPriceInput.value = "";
                 profitInput.value = "";
-                stockWarning.style.display = "none";
             }
         }
 
+        // Attach event listeners
+        productSelect.addEventListener("change", updateProductDetails);
         quantitySoldInput.addEventListener("input", calculateTotalAndProfit);
-        sellingPriceInput.addEventListener("input", calculateTotalAndProfit);
-        document.getElementById("product").addEventListener("change", updateProductDetails);
-
-        const form = document.querySelector(".needs-validation");
-        form.addEventListener("submit", function (event) {
-            if (!form.checkValidity() || quantitySoldInput.value > availableStock) {
-                event.preventDefault();
-                event.stopPropagation();
-                if (quantitySoldInput.value > availableStock) {
-                    stockWarning.style.display = "block";
-                    stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
-                }
-            }
-            form.classList.add("was-validated");
-        });
     });
 </script>
 {% endblock %}

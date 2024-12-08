@@ -9,7 +9,33 @@
     <form method="POST" class="needs-validation shadow-sm p-3 bg-light rounded" novalidate>
         {% csrf_token %}
 
-        <!-- First Section: Product Information -->
+        <!-- First Row: Supplier and Price Per Unit -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <!-- Supplier Selection -->
+                <div class="mb-2">
+                    <label for="supplier" class="form-label">Supplier:</label>
+                    <select class="form-select" name="supplier" id="supplier" required>
+                        <option value="" disabled selected>Select a supplier</option>
+                        {% for supplier in suppliers %}
+                        <option value="{{ supplier.id }}">{{ supplier.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <div class="invalid-feedback">Please select a supplier.</div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <!-- Price per Unit -->
+                <div class="mb-2">
+                    <label for="price_per_unit" class="form-label">Price per Unit:</label>
+                    <input type="number" step="0.01" class="form-control" id="price_per_unit" name="price_per_unit" placeholder="Enter price per unit" required>
+                    <div class="invalid-feedback">Please enter the price per unit.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Second Row: Product Name and Category -->
         <div class="row mb-3">
             <div class="col-md-6">
                 <!-- Product Name -->
@@ -29,39 +55,14 @@
             </div>
         </div>
 
+        <!-- Third Row: Quantity Supplied and Cost Price -->
         <div class="row mb-3">
-            <div class="col-md-6">
-                <!-- Selling Price per Unit -->
-                <div class="mb-2">
-                    <label for="price_per_unit" class="form-label">Price per Unit:</label>
-                    <input type="number" step="0.01" class="form-control" id="price_per_unit" name="price_per_unit" placeholder="Enter price per unit" required>
-                    <div class="invalid-feedback">Please enter the selling price per unit.</div>
-                </div>
-            </div>
-
             <div class="col-md-6">
                 <!-- Quantity Supplied -->
                 <div class="mb-2">
                     <label for="quantity_supplied" class="form-label">Quantity Supplied:</label>
                     <input type="number" class="form-control" id="quantity_supplied" name="quantity_supplied" min="1" placeholder="Enter quantity supplied" required>
                     <div class="invalid-feedback">Please enter the quantity supplied.</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Second Section: Supplier and Cost Information -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <!-- Supplier Selection -->
-                <div class="mb-2">
-                    <label for="supplier" class="form-label">Supplier:</label>
-                    <select class="form-select" name="supplier" id="supplier" required>
-                        <option value="" disabled selected>Select a supplier</option>
-                        {% for supplier in suppliers %}
-                        <option value="{{ supplier.id }}">{{ supplier.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <div class="invalid-feedback">Please select a supplier.</div>
                 </div>
             </div>
 
