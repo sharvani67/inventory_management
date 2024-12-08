@@ -19,10 +19,14 @@ urlpatterns = [
     # Supplier Products
     path("add-supplier-product/", product_views.add_supplier_product, name="add_supplier_product"),
     path("supplier-products/", product_views.supplier_product_list, name="supplier_product_list"),
+     path('update-product/<int:product_id>/', product_views.update_supplier_product, name='update_supplier_product'),
+      path('delete-supplier-product/<int:product_id>/', product_views.delete_supplier_product, name='delete_supplier_product'),
     
     # Suppliers
     path("add-supplier/", supplier_views.add_supplier, name="add_supplier"),
     path("suppliers/", supplier_views.supplier_list, name="supplier_list"),
+    path('supplier/update/<int:pk>/', supplier_views.update_supplier, name='update_supplier'),
+     path('supplier/delete/<int:pk>/', supplier_views.delete_supplier, name='delete_supplier'),
 
     path('stock-analysis/', views.stock_analysis_list, name='stock_analysis_list'),
     path('home/', views.home, name='home'),
