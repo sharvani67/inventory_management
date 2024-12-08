@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home - Inventory Management</title>
+        <!-- Bootstrap CSS CDN -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Optional JavaScript and Popper.js -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Custom CSS -->
+        <style>
+            /* Navbar Customization */
+            .navbar {
+                background-color: #1E2952; /* Deep Navy Blue */
+            }
+            .navbar-brand, .nav-link {
+                color: #FFFFFF !important; /* White Text */
+                transition: color 0.3s ease-in-out;
+            }
+            .nav-link.active {
+                color: #00D1B2 !important; /* Teal Highlight for Active Link */
+                font-weight: bold; /* Make Active Link Bold */
+            }
+            .nav-link:hover {
+                color: #00D1B2 !important; /* Teal Hover Effect */
+            }
+            .btn-danger {
+                background-color: #FF6F61 !important; /* Coral Red for Logout Button */
+                border: none;
+            }
+            .btn-danger:hover {
+                background-color: #FF3B2F !important; /* Darker Coral Red on Hover */
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Navigation Bar -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'home' %}">Inventory Management</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'add_supplier' %}active{% endif %}" href="{% url 'add_supplier' %}">Add Suppliers</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'add_supplier_product' %}active{% endif %}" href="{% url 'add_supplier_product' %}">Add Products</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'add_sale' %}active{% endif %}" href="{% url 'add_sale' %}">Add Sale</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}" href="{% url 'manager_dashboard' %}">Manager Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'owner_dashboard' %}active{% endif %}" href="{% url 'owner_dashboard' %}">Owner Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn btn-danger text-white" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+    
+    <!-- Welcome Section -->
+    <header class=" text-dark text-center py-5" style="background-color: #FAF6E3;">
+        <div class="container">
+            <h1>Welcome to the Inventory Management System</h1>
+            <p class="lead">Track, manage, and grow your business efficiently.</p>
+        </div>
+    </header>
+
+
+
+    <!-- Role-Specific Options -->
+    <div class="container my-5">
+        <div class="row text-center">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Stock Analysis</h5>
+                        <p class="card-text">Monitor inventory trends, evaluate stock movement, and ensure optimal stock levels for efficient operations.</p>
+                        <a href="{% url 'stock_analysis_list' %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Suppliers</h5>
+                        <p class="card-text">Manage supplier details, track provided products, and maintain a reliable supply chain for your inventory.</p>
+                        <a href="{% url 'supplier_list' %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Products</h5>
+                        <p class="card-text">View and manage all products supplied by vendors, track inventory levels, and ensure accurate stock information.</p>
+                        <a href="{% url 'supplier_product_list' %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Sales</h5>
+                        <p class="card-text">Track all sales transactions, analyze trends, and monitor revenue to ensure business growth.</p>
+                        <a href="{% url 'sales_list' %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Customers</h5>
+                        <p class="card-text">Manage customer details, review purchase history, and build stronger relationships for sustained growth.</p>
+                        <a href="{% url 'customer_list' %}" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-3">
+        <p>&copy; 2024 Inventory Management System. All rights reserved.</p>
+    </footer>
+</body>
+</html>

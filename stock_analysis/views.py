@@ -83,3 +83,7 @@ def customer_list(request):
     sales = Sale.objects.all()
     
     return render(request, 'customers_list.html', {'sales': sales})
+
+# home view
+def home(request):
+    return render(request, 'home.html')

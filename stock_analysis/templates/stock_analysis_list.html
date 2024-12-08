@@ -3,7 +3,7 @@
 {% block title %}Stock Analysis{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
+<div class="container">
     <h2 class="mb-4">Stock Analysis</h2>
 
     <!-- Stock Analysis Table -->
@@ -11,9 +11,10 @@
         <table class="table table-bordered table-striped" id="stockAnalysisTable">
             <thead class="table-dark">
                 <tr>
+                    <th>S.No</th>
                     <th>Product</th>
                     <th>Category</th>
-                    <th>Supplier</th>
+                    <!--<th>Supplier</th>-->
                     <th>Quantity Supplied</th>
                     <th>Quantity Sold</th>
                     <th>Remaining Stock</th>
@@ -22,9 +23,10 @@
             <tbody>
                 {% for item in stock_analysis %}
                 <tr>
+                    <td>{{ forloop.counter }}</td>  <!-- Serial Number -->
                     <td>{{ item.name }}</td>
                     <td>{{ item.category }}</td>
-                    <td>{{ item.supplier }}</td>
+                   <!-- <td>{{ item.supplier }}</td>-->
                     <td>{{ item.quantity_supplied }}</td>
                     <td>{{ item.quantity_sold }}</td>
                     <td>{{ item.remaining_stock }}</td>

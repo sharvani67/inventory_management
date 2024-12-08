@@ -3,61 +3,59 @@
 {% block title %}Add Supplier{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2 class="mb-4">Add Supplier</h2>
-    <form method="POST" class="needs-validation" novalidate>
+<div class="container mt-4">
+    <h2 class="text-center mb-3" style="color: black">Add Supplier</h2>
+
+    <form method="POST" class="needs-validation shadow-sm p-3 bg-light rounded" novalidate>
         {% csrf_token %}
-        <!-- Name -->
-        <div class="mb-3">
-            <label for="name" class="form-label">Name:</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-            <div class="invalid-feedback">
-                Please provide a valid name.
+
+        <!-- Supplier Name and Contact on Same Row -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="name" class="form-label">Supplier Name:</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter supplier name" required>
+                <div class="invalid-feedback">Please provide a valid name.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="contact" class="form-label">Contact Number:</label>
+                <input type="tel" class="form-control" id="contact" name="contact" pattern="\d{10}" placeholder="Enter 10-digit contact" required>
+                <div class="invalid-feedback">Please provide a valid 10-digit contact number.</div>
             </div>
         </div>
-        <!-- Contact -->
-        <div class="mb-3">
-            <label for="contact" class="form-label">Contact:</label>
-            <input type="text" class="form-control" id="contact" name="contact" pattern="\d{10}" placeholder="Enter 10-digit contact" required>
-            <div class="invalid-feedback">
-                Please enter a valid 10-digit contact number.
+
+        <!-- Email and Date of Partnership on Same Row -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="email" class="form-label">Email Address:</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter email address" required>
+                <div class="invalid-feedback">Please provide a valid email address.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="date" class="form-label">Date of Partnership:</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+                <div class="invalid-feedback">Please select a valid date.</div>
             </div>
         </div>
-        <!-- Email -->
-        <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-            <div class="invalid-feedback">
-                Please enter a valid email address.
+
+        <!-- Address and Company Name on Same Row -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="address" class="form-label">Address:</label>
+                <textarea class="form-control" id="address" name="address" rows="3" placeholder="Enter supplier address" required></textarea>
+                <div class="invalid-feedback">Please provide an address.</div>
+            </div>
+            <div class="col-md-6">
+                <label for="company" class="form-label">Company Name:</label>
+                <input type="text" class="form-control" id="company" name="company" placeholder="Enter company name" required>
+                <div class="invalid-feedback">Please provide a company name.</div>
             </div>
         </div>
-        <!-- Address -->
-        <div class="mb-3">
-            <label for="address" class="form-label">Address:</label>
-            <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
-            <div class="invalid-feedback">
-                Please provide an address.
-            </div>
-        </div>
-        <!-- Company -->
-        <div class="mb-3">
-            <label for="company" class="form-label">Company:</label>
-            <input type="text" class="form-control" id="company" name="company" required>
-            <div class="invalid-feedback">
-                Please provide a company name.
-            </div>
-        </div>
-        <!-- Date -->
-        <div class="mb-3">
-            <label for="date" class="form-label">Date of Partnership:</label>
-            <input type="date" class="form-control" id="date" name="date" required>
-            <div class="invalid-feedback">
-                Please select a valid date.
-            </div>
-        </div>
+
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary">Add Supplier</button>
-        <a href="{% url 'supplier_list' %}" class="btn btn-secondary">Back to Supplier List</a>
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <button type="submit" class="btn btn-primary btn-sm-2">Add Supplier</button>
+            <a href="{% url 'supplier_list' %}" class="btn btn-secondary btn-sm-2">Back to Supplier List</a>
+        </div>
     </form>
 </div>
 
