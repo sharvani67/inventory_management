@@ -1,0 +1,62 @@
+{% extends 'index.html' %}
+
+{% block title %}Add Selling Price{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-3" style="color: black">Add Selling Price</h2>
+
+    <form method="POST" class="needs-validation shadow-sm p-3 bg-light rounded" novalidate>
+        {% csrf_token %}
+
+        <!-- Dropdown for Products -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="supplier_product" class="form-label">Product:</label>
+                <select class="form-select" id="supplier_product" name="supplier_product" required>
+                    <option value="">Select a product</option>
+                    {% for product in supplier_products %}
+                        <option value="{{ product.id }}">{{ product.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Please select a product.</div>
+            </div>
+
+            <!-- Selling Price Input -->
+            <div class="col-md-6">
+                <label for="our_selling_price_per_unit" class="form-label">Selling Price:</label>
+                <input type="number" step="0.01" class="form-control" id="our_selling_price_per_unit" name="our_selling_price_per_unit" required>
+                <div class="invalid-feedback">Please provide a valid selling price.</div>
+            </div>
+        </div>
+
+        <!-- Hidden field for Current Date -->
+        <input type="hidden" name="date_added" value="{{ now|date:'Y-m-d H:i:s' }}">
+
+        <!-- Submit Button -->
+        <div class="d-flex justify-content-center gap-3 mt-3">
+            <button type="submit" href="{% url 'selling_price_list' %}" class="btn btn-primary btn-sm-2">Add Selling Price</button>
+            
+        </div>
+    </form>
+</div>
+
+<!-- Bootstrap JS and Validation Script -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Bootstrap Form Validation
+    (() => {
+        'use strict';
+        const forms = document.querySelectorAll('.needs-validation');
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    })();
+</script>
+{% endblock %}

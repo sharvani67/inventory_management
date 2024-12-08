@@ -30,11 +30,13 @@
                 <select class="form-select" name="supplier_product" id="product" required onchange="updateProductDetails()">
                     <option value="" disabled selected>Select a Product</option>
                     {% for product in supplier_products %}
-                    {% with fixed_price=product.sellingpricelist_set.first %}
-                        <option value="{{ product.id }}" 
-                                data-selling-price="{{ fixed_price.fixed_selling_price if fixed_price else product.selling_price_per_unit }}" 
-                                data-stock="{{ product.remaining_stock }}">{{ product.name }}</option>
-                    {% endwith %}
+                    <option value="{{ product.id }}" 
+                        data-selling-price="{{ selling_prices|default_if_none:product.id }}" 
+                        data-stock="{{ product.remaining_stock }}">
+                    {{ product.name }}
+                    </option>
+
+
                     {% endfor %}
                 </select>
                 <div class="invalid-feedback">Please select a product.</div>
@@ -78,59 +80,55 @@
 <!-- JavaScript for Validation and Calculations -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const quantitySoldInput = document.getElementById("quantity_sold");
+        const productSelect = document.getElementById("product");
         const sellingPriceInput = document.getElementById("our_selling_price_per_unit");
-        const totalPriceInput = document.getElementById("total_price");
-        const profitInput = document.getElementById("profit");
         const stockWarning = document.getElementById("stock-warning");
-    
-        let supplierSellingPrice = 0;
-        let availableStock = 0;
-    
+
         // Update product details when a product is selected
         function updateProductDetails() {
-            const selectedProduct = document.getElementById("product").selectedOptions[0];
-            supplierSellingPrice = parseFloat(selectedProduct.getAttribute("data-selling-price")) || 0; // Get selling price per unit
-            availableStock = parseInt(selectedProduct.getAttribute("data-stock")) || 0; // Get available stock
-            stockWarning.style.display = "none"; // Hide warning when product changes
-            // Set the selling price in the 'Our Selling Price' field
-            const ourSellingPriceInput = document.getElementById("our_selling_price_per_unit");
-            ourSellingPriceInput.value = supplierSellingPrice.toFixed(2);  // Set the value of the input field
-            calculateTotalAndProfit();
+            const selectedProduct = productSelect.selectedOptions[0];
+            const sellingPrice = parseFloat(selectedProduct.getAttribute("data-selling-price")) || 0;
+            const availableStock = parseInt(selectedProduct.getAttribute("data-stock")) || 0;
+
+            // Update selling price input field
+            sellingPriceInput.value = sellingPrice.toFixed(2);
+
+            // Hide stock warning by default
+            stockWarning.style.display = "none";
         }
-    
+
+        productSelect.addEventListener("change", updateProductDetails);
+        
+
         // Calculate Total Price and Profit
         function calculateTotalAndProfit() {
             const quantitySold = parseInt(quantitySoldInput.value) || 0;
             const ourSellingPricePerUnit = parseFloat(sellingPriceInput.value) || 0;
-    
+
             if (quantitySold > 0 && ourSellingPricePerUnit > 0) {
                 const totalPrice = quantitySold * ourSellingPricePerUnit;
                 const profit = quantitySold * (ourSellingPricePerUnit - supplierSellingPrice);
-    
+
                 totalPriceInput.value = totalPrice.toFixed(2);
                 profitInput.value = profit.toFixed(2);
-    
-                // Check stock availability
+
                 if (quantitySold > availableStock) {
                     stockWarning.style.display = "block";
                     stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
                 } else {
-                    stockWarning.style.display = "none"; // Hide warning if quantity is valid
+                    stockWarning.style.display = "none";
                 }
             } else {
                 totalPriceInput.value = "";
                 profitInput.value = "";
-                stockWarning.style.display = "none"; // Hide warning if input is invalid
+                stockWarning.style.display = "none";
             }
         }
-    
-        // Add event listeners
+
         quantitySoldInput.addEventListener("input", calculateTotalAndProfit);
         sellingPriceInput.addEventListener("input", calculateTotalAndProfit);
         document.getElementById("product").addEventListener("change", updateProductDetails);
-    
-        // Form validation
+
         const form = document.querySelector(".needs-validation");
         form.addEventListener("submit", function (event) {
             if (!form.checkValidity() || quantitySoldInput.value > availableStock) {

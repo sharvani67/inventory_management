@@ -27,18 +27,14 @@ class SupplierProduct(models.Model):
 
     def __str__(self):
         return f"{self.name} from {self.supplier.name}"
-    
-from django.db import models
-from django.utils.timezone import now
 
-class SellingPriceList(models.Model):
+class SellingPrice(models.Model):
     supplier_product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE)
-    fixed_selling_price = models.DecimalField(max_digits=10, decimal_places=2)
-    updated_at = models.DateTimeField(auto_now=True)  # Automatically updates whenever the price is changed
+    our_selling_price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
+    date_added = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Fixed price for {self.supplier_product.name}"
-
+        return f"Price for {self.supplier_product.product_name} on {self.date_added}"
 
 
 # sale model 

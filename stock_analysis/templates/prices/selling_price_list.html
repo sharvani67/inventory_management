@@ -1,0 +1,44 @@
+{% extends 'index.html' %}
+
+{% block title %}Selling Price List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-3" style="color: black">Selling Price List</h2>
+
+    <!-- Table to display selling prices -->
+    <div class="table-responsive shadow-sm p-3 bg-light rounded">
+        <table class="table table-striped table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Selling Price (per unit)</th>
+                    <th>Date Added</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for price in selling_prices %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ price.supplier_product.name }}</td>
+                        <td>{{ price.supplier_product.category }}</td>
+                        <td>{{ price.our_selling_price_per_unit }}</td>
+                        <td>{{ price.date_added|date:"Y-m-d H:i:s" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center">No selling prices available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Back Button -->
+    <div class="d-flex justify-content-center mt-3">
+        <a href="{% url 'add_selling_price' %}" class="btn btn-primary btn-sm">Add Selling Price</a>
+    </div>
+</div>
+{% endblock %}

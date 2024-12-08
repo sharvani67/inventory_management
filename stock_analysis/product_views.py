@@ -46,15 +46,7 @@ def supplier_product_list(request):
     supplier_products = SupplierProduct.objects.select_related("supplier")
     return render(request, "products/supplier_product_list.html", {"supplier_products": supplier_products})
 
-from django.shortcuts import render
-from .models import SellingPriceList
 
-def selling_price_list(request):
-    # Fetch all SellingPriceList entries
-    price_list = SellingPriceList.objects.select_related('supplier_product').all()
-
-    # Render the template with the price list
-    return render(request, "sales/selling_price_list.html", {"price_list": price_list})
 
 
 
