@@ -30,9 +30,11 @@
                 <select class="form-select" name="supplier_product" id="product" required onchange="updateProductDetails()">
                     <option value="" disabled selected>Select a Product</option>
                     {% for product in supplier_products %}
-                    <option value="{{ product.id }}" 
-                            data-selling-price="{{ product.selling_price_per_unit }}" 
-                            data-stock="{{ product.remaining_stock }}">{{ product.name }}</option>
+                    {% with fixed_price=product.sellingpricelist_set.first %}
+                        <option value="{{ product.id }}" 
+                                data-selling-price="{{ fixed_price.fixed_selling_price if fixed_price else product.selling_price_per_unit }}" 
+                                data-stock="{{ product.remaining_stock }}">{{ product.name }}</option>
+                    {% endwith %}
                     {% endfor %}
                 </select>
                 <div class="invalid-feedback">Please select a product.</div>
@@ -91,6 +93,9 @@
             supplierSellingPrice = parseFloat(selectedProduct.getAttribute("data-selling-price")) || 0; // Get selling price per unit
             availableStock = parseInt(selectedProduct.getAttribute("data-stock")) || 0; // Get available stock
             stockWarning.style.display = "none"; // Hide warning when product changes
+            // Set the selling price in the 'Our Selling Price' field
+            const ourSellingPriceInput = document.getElementById("our_selling_price_per_unit");
+            ourSellingPriceInput.value = supplierSellingPrice.toFixed(2);  // Set the value of the input field
             calculateTotalAndProfit();
         }
     

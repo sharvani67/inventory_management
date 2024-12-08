@@ -1,0 +1,36 @@
+{% extends 'index.html' %}
+
+{% block title %}Selling Price List{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="text-center mb-3">Selling Price List</h2>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Fixed Selling Price</th>
+                <th>Last Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in price_list %}
+            <tr>
+                <td>{{ entry.supplier_product.name }}</td>
+                <td>{{ entry.fixed_selling_price }}</td>
+                <td>{{ entry.updated_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" class="text-center">No selling prices found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center">
+        <a href="{% url 'add_sale' %}" class="btn btn-primary">Add Sale</a>
+    </div>
+</div>
+{% endblock %}
