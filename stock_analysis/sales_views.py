@@ -4,40 +4,43 @@ from django.db.models import Sum
 from django.utils.timezone import now
 from decimal import Decimal
 
-def add_sale(request):
-    # Fetch all supplier products
-    supplier_products = SupplierProduct.objects.all()
+from django.db.models.functions import Lower
 
-    # Prepare a dictionary of selling prices for each product
+def add_sale(request):
+    # Fetch distinct product names (case-insensitive)
+    supplier_products = SupplierProduct.objects.order_by(Lower('name')).values('name').distinct()
+
+    # Prepare selling prices for each product (optional for autocomplete)
     selling_prices = {
-        product.id: product.selling_price_per_unit
+        product['name']: SellingPrice.objects.filter(
+            supplier_product__name=product['name']
+        ).first().our_selling_price_per_unit
+        if SellingPrice.objects.filter(supplier_product__name=product['name']).exists()
+        else None
         for product in supplier_products
     }
-
-    # Calculate remaining stock for each product
-    for product in supplier_products:
-        total_supplied = product.stock_quantity
-        total_sold = Sale.objects.filter(supplier_product=product).aggregate(Sum('quantity_sold'))['quantity_sold__sum'] or 0
-        product.remaining_stock = total_supplied - total_sold
 
     if request.method == "POST":
         customer_name = request.POST.get("customer_name")
         customer_mobile = request.POST.get("customer_mobile")
-        supplier_product_id = request.POST.get("supplier_product")
+        product_name = request.POST.get("supplier_product")
         quantity_sold = int(request.POST.get("quantity_sold"))
-        our_selling_price_per_unit = float(request.POST.get("our_selling_price_per_unit"))
 
-        supplier_product = get_object_or_404(SupplierProduct, id=supplier_product_id)
+        # Fetch the first SupplierProduct entry for the selected product name
+        supplier_product = SupplierProduct.objects.filter(name=product_name).first()
+        if not supplier_product:
+            error_message = "Invalid product selected."
+            return render(request, "sales/add_sale.html", {
+                "supplier_products": supplier_products,
+                "selling_prices": selling_prices,
+                "error_message": error_message
+            })
 
-        # Get the selling price from the SellingPrice model, not SupplierProduct directly
+        # Get the selling price from SellingPrice model
         selling_price_record = SellingPrice.objects.filter(supplier_product=supplier_product).first()
-        if selling_price_record:
-            our_selling_price_per_unit = selling_price_record.our_selling_price_per_unit
-        else:
-            # If no selling price is found, use the default selling price
-            our_selling_price_per_unit = supplier_product.selling_price_per_unit
+        our_selling_price_per_unit = selling_price_record.our_selling_price_per_unit if selling_price_record else supplier_product.selling_price_per_unit
 
-        # Calculate available stock for the selected product
+        # Calculate available stock
         total_supplied = supplier_product.stock_quantity
         total_sold = Sale.objects.filter(supplier_product=supplier_product).aggregate(Sum('quantity_sold'))['quantity_sold__sum'] or 0
         remaining_stock = total_supplied - total_sold
@@ -51,10 +54,8 @@ def add_sale(request):
                 "error_message": error_message
             })
 
-        # Get supplier's selling price per unit
-        supplier_selling_price = Decimal(supplier_product.selling_price_per_unit)
-
         # Calculate total price and profit
+        supplier_selling_price = Decimal(supplier_product.selling_price_per_unit)
         total_price = quantity_sold * our_selling_price_per_unit
         profit = (our_selling_price_per_unit - supplier_selling_price) * quantity_sold
 

@@ -27,17 +27,17 @@
         <div class="row mb-3">
             <div class="col-md-6">
                 <label for="product" class="form-label">Product:</label>
-                <select name="supplier_product" id="product_select" onchange="updateProductDetails()">
+                <select class="form-select" name="supplier_product" id="product_select" required>
                     <option value="" disabled selected>Select a Product</option>
                     {% for product in supplier_products %}
-                    <option value="{{ product.id }}" 
-                        data-supplier-price="{{ product.selling_price_per_unit }}" 
+                    <option value="{{ product.name }}"
+                        data-supplier-price="{{ product.selling_price_per_unit }}"
                         data-our-price="{% if product.sellingprice_set.first %}{{ product.sellingprice_set.first.our_selling_price_per_unit }}{% else %}{{ product.selling_price_per_unit }}{% endif %}"
                         data-remaining-stock="{{ product.remaining_stock }}">
                         {{ product.name }}
                     </option>
                     {% endfor %}
-                </select>                
+                </select>
                 <div class="invalid-feedback">Please select a product.</div>
             </div>
             <div class="col-md-6">
@@ -62,15 +62,15 @@
 
         <!-- Submit Button -->
         <div class="d-flex justify-content-center gap-3 mt-3">
-            <button type="submit" class="btn btn-primary btn-sm-2">Add Sale</button>
-            <a href="{% url 'sales_list' %}" class="btn btn-secondary btn-sm-2">Back to Sales List</a>
+            <button type="submit" class="btn btn-primary">Add Sale</button>
+            <a href="{% url 'sales_list' %}" class="btn btn-secondary">Back to Sales List</a>
         </div>
     </form>
 </div>
 
 <!-- JavaScript for Validation and Calculations -->
 <script>
-   document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function () {
     const productSelect = document.getElementById("product_select");
     const quantitySoldInput = document.getElementById("quantity_sold");
     const totalPriceInput = document.getElementById("total_price");
@@ -88,7 +88,7 @@
         availableStock = parseInt(selectedProduct.getAttribute("data-remaining-stock")) || 0; // Fetch remaining stock
 
         // Update fields
-        sellingPriceInput.value = ourPrice.toFixed(2);
+        sellingPriceInput.value = ourPrice.toFixed(2); // This will auto-fill the selling price field
         stockWarning.style.display = "none"; // Hide the stock warning initially
         calculateTotalAndStock();
     }
@@ -119,21 +119,20 @@
     productSelect.addEventListener("change", updateProductDetails);
     quantitySoldInput.addEventListener("input", calculateTotalAndStock);
 
-
-
-        // Form Validation
-        const form = document.querySelector(".needs-validation");
-        form.addEventListener("submit", function (event) {
-            if (!form.checkValidity() || parseInt(quantitySoldInput.value) > availableStock) {
-                event.preventDefault();
-                event.stopPropagation();
-                if (parseInt(quantitySoldInput.value) > availableStock) {
-                    stockWarning.style.display = "block";
-                    stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
-                }
+    // Form Validation
+    const form = document.querySelector(".needs-validation");
+    form.addEventListener("submit", function (event) {
+        if (!form.checkValidity() || parseInt(quantitySoldInput.value) > availableStock) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (parseInt(quantitySoldInput.value) > availableStock) {
+                stockWarning.style.display = "block";
+                stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
             }
-            form.classList.add("was-validated");
-        });
+        }
+        form.classList.add("was-validated");
     });
+});
+
 </script>
 {% endblock %}

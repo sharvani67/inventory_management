@@ -16,9 +16,10 @@
                 <select class="form-select" id="supplier_product" name="supplier_product" required>
                     <option value="">Select a product</option>
                     {% for product in supplier_products %}
-                        <option value="{{ product.id }}">{{ product.name }}</option>
+                        <option value="{{ product.name }}">{{ product.name }}</option>
                     {% endfor %}
                 </select>
+                
                 <div class="invalid-feedback">Please select a product.</div>
             </div>
 
