@@ -32,7 +32,8 @@
                     {% for product in supplier_products %}
                     <option value="{{ product.id }}" 
                         data-supplier-price="{{ product.selling_price_per_unit }}" 
-                        data-our-price="{% if product.sellingprice_set.first %}{{ product.sellingprice_set.first.our_selling_price_per_unit }}{% else %}{{ product.selling_price_per_unit }}{% endif %}">
+                        data-our-price="{% if product.sellingprice_set.first %}{{ product.sellingprice_set.first.our_selling_price_per_unit }}{% else %}{{ product.selling_price_per_unit }}{% endif %}"
+                        data-remaining-stock="{{ product.remaining_stock }}">
                         {{ product.name }}
                     </option>
                     {% endfor %}
@@ -47,19 +48,15 @@
             </div>
         </div>
 
-        <!-- Selling Price, Total Price, and Profit -->
+        <!-- Selling Price and Total Price -->
         <div class="row mb-3">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="our_selling_price_per_unit" class="form-label">Our Selling Price per Unit:</label>
                 <input type="number" step="0.01" class="form-control" name="our_selling_price_per_unit" id="our_selling_price_per_unit" readonly>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="total_price" class="form-label">Total Price:</label>
                 <input type="text" id="total_price" class="form-control" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="profit" class="form-label">Profit:</label>
-                <input type="text" id="profit" class="form-control" readonly>
             </div>
         </div>
 
@@ -71,56 +68,72 @@
     </form>
 </div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-
 <!-- JavaScript for Validation and Calculations -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const productSelect = document.getElementById("product_select");
-        const sellingPriceInput = document.getElementById("our_selling_price_per_unit");
-        const quantitySoldInput = document.getElementById("quantity_sold");
-        const totalPriceInput = document.getElementById("total_price");
-        const profitInput = document.getElementById("profit");
-        const stockWarning = document.getElementById("stock-warning");
+   document.addEventListener("DOMContentLoaded", function () {
+    const productSelect = document.getElementById("product_select");
+    const quantitySoldInput = document.getElementById("quantity_sold");
+    const totalPriceInput = document.getElementById("total_price");
+    const sellingPriceInput = document.getElementById("our_selling_price_per_unit");
+    const stockWarning = document.getElementById("stock-warning");
 
-        let availableStock = 0; // Store the available stock
-        let ownSellingPrice = 0; // Default own selling price for profit calculation
+    let availableStock = 0; // To store available stock for the selected product
 
-        // Update product details when a product is selected
-        function updateProductDetails() {
-            const selectedProduct = productSelect.selectedOptions[0]; // Get the selected option
-            const supplierPrice = parseFloat(selectedProduct.getAttribute("data-supplier-price")) || 0;
-            ownSellingPrice = parseFloat(selectedProduct.getAttribute("data-our-price")) || 0;
+    // Update product details when a product is selected
+    function updateProductDetails() {
+        const selectedProduct = productSelect.selectedOptions[0]; // Get the selected option
+        const supplierPrice = parseFloat(selectedProduct.getAttribute("data-supplier-price")) || 0;
+        const ourPrice = parseFloat(selectedProduct.getAttribute("data-our-price")) || 0;
 
-            // Update the selling price input field
-            sellingPriceInput.value = ownSellingPrice.toFixed(2);
+        availableStock = parseInt(selectedProduct.getAttribute("data-remaining-stock")) || 0; // Fetch remaining stock
 
-            // Reset calculations
-            calculateTotalAndProfit();
-            stockWarning.style.display = "none"; // Hide stock warning by default
+        // Update fields
+        sellingPriceInput.value = ourPrice.toFixed(2);
+        stockWarning.style.display = "none"; // Hide the stock warning initially
+        calculateTotalAndStock();
+    }
+
+    // Calculate Total Price and Stock Validation
+    function calculateTotalAndStock() {
+        const quantitySold = parseInt(quantitySoldInput.value) || 0;
+        const ourSellingPricePerUnit = parseFloat(sellingPriceInput.value) || 0;
+
+        // Check stock availability
+        if (quantitySold > availableStock) {
+            stockWarning.style.display = "block";
+            stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
+        } else {
+            stockWarning.style.display = "none";
         }
 
-        // Calculate Total Price and Profit
-        function calculateTotalAndProfit() {
-            const quantitySold = parseInt(quantitySoldInput.value) || 0;
-            const ourSellingPricePerUnit = parseFloat(sellingPriceInput.value) || 0;
+        // Calculate total price
+        if (quantitySold > 0 && ourSellingPricePerUnit > 0) {
+            const totalPrice = quantitySold * ourSellingPricePerUnit;
+            totalPriceInput.value = totalPrice.toFixed(2);
+        } else {
+            totalPriceInput.value = "";
+        }
+    }
 
-            if (quantitySold > 0 && ourSellingPricePerUnit > 0) {
-                const totalPrice = quantitySold * ourSellingPricePerUnit;
-                const profit = quantitySold * (ourSellingPricePerUnit - ownSellingPrice);
+    // Attach event listeners
+    productSelect.addEventListener("change", updateProductDetails);
+    quantitySoldInput.addEventListener("input", calculateTotalAndStock);
 
-                totalPriceInput.value = totalPrice.toFixed(2);
-                profitInput.value = profit.toFixed(2);
-            } else {
-                totalPriceInput.value = "";
-                profitInput.value = "";
+
+
+        // Form Validation
+        const form = document.querySelector(".needs-validation");
+        form.addEventListener("submit", function (event) {
+            if (!form.checkValidity() || parseInt(quantitySoldInput.value) > availableStock) {
+                event.preventDefault();
+                event.stopPropagation();
+                if (parseInt(quantitySoldInput.value) > availableStock) {
+                    stockWarning.style.display = "block";
+                    stockWarning.innerText = `Not enough stock! Only ${availableStock} items available.`;
+                }
             }
-        }
-
-        // Attach event listeners
-        productSelect.addEventListener("change", updateProductDetails);
-        quantitySoldInput.addEventListener("input", calculateTotalAndProfit);
+            form.classList.add("was-validated");
+        });
     });
 </script>
 {% endblock %}
