@@ -3,26 +3,64 @@
 {% block title %}Manager Dashboard{% endblock %}
 
 {% block content %}
-<h2>Manager Dashboard</h2>
 
-<h3>Low Stock Products</h3>
-<table border="1">
-    <tr>
-        <th>Name</th>
-        <th>Stock Quantity</th>
-    </tr>
-    {% for product in low_stock_products %}
-    <tr>
-        <td>{{ product.name }}</td>
-        <td>{{ product.stock_quantity }}</td>
-    </tr>
-    {% endfor %}
-</table>
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Manager Dashboard</h1>
 
-<h3>Sales Analysis</h3>
-<ul>
-    <li>Daily Sales: ₹{{ daily_sales }}</li>
-    <li>Weekly Sales: ₹{{ weekly_sales }}</li>
-    <li>Monthly Sales: ₹{{ monthly_sales }}</li>
-</ul>
+        <!-- Sales Analysis Section -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Daily Sales</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Total Sales: {{ daily_sales.total_sales|default:0 }}</h5>
+                        <p class="card-text">Total Revenue: ${{ daily_sales.total_revenue|floatformat:2|default:0 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Weekly Sales</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Total Sales: {{ weekly_sales.total_sales|default:0 }}</h5>
+                        <p class="card-text">Total Revenue: ${{ weekly_sales.total_revenue|floatformat:2|default:0 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Monthly Sales</div>
+                    <div class="card-body">
+                        <h5 class="card-title">Total Sales: {{ monthly_sales.total_sales|default:0 }}</h5>
+                        <p class="card-text">Total Revenue: ${{ monthly_sales.total_revenue|floatformat:2|default:0 }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Low Stock Products Section -->
+        <h2 class="mt-5">Low Stock Products</h2>
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Product Name</th>
+                    <th>Remaining Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in low_stock_products %}
+                    <tr>
+                        <td>{{ product.product_name }}</td>
+                        <td>{{ product.remaining_stock }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2" class="text-center">No low stock products</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
 {% endblock %}

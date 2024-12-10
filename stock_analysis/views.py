@@ -4,47 +4,102 @@ from django.shortcuts import render
 
 # Manager Dashboard
 
-# Manager Dashboard
+from django.shortcuts import render
+from django.db.models import Sum, Q
+from datetime import datetime, timedelta
+from .models import Sale, SupplierProduct
+
 def manager_dashboard(request):
+    # Get the current date and calculate date ranges
     today = datetime.now().date()
-    start_of_week = today - timedelta(days=today.weekday())
-    start_of_month = today.replace(day=1)
+    week_start = today - timedelta(days=today.weekday())  # Start of the week (Monday)
+    month_start = today.replace(day=1)  # Start of the month
 
-    # Low stock warning logic (Low stock products from stock analysis)
-    low_stock_products = SupplierProduct.objects.filter(stock_quantity__lt=10)
+    # Daily Sales Analysis
+    daily_sales = Sale.objects.filter(sale_date__date=today).aggregate(
+        total_sales=Sum('quantity_sold'), total_revenue=Sum('total_price')
+    )
 
-    # Sales data
-    daily_sales = Sale.objects.filter(sale_date__date=today).aggregate(total=Sum('total_price'))['total'] or 0
-    weekly_sales = Sale.objects.filter(sale_date__date__gte=start_of_week).aggregate(total=Sum('total_price'))['total'] or 0
-    monthly_sales = Sale.objects.filter(sale_date__date__gte=start_of_month).aggregate(total=Sum('total_price'))['total'] or 0
+    # Weekly Sales Analysis
+    weekly_sales = Sale.objects.filter(sale_date__date__gte=week_start).aggregate(
+        total_sales=Sum('quantity_sold'), total_revenue=Sum('total_price')
+    )
 
-    return render(request, "manager_dashboard.html", {
-        "low_stock_products": low_stock_products,
-        "daily_sales": daily_sales,
-        "weekly_sales": weekly_sales,
-        "monthly_sales": monthly_sales,
-    })
+    # Monthly Sales Analysis
+    monthly_sales = Sale.objects.filter(sale_date__date__gte=month_start).aggregate(
+        total_sales=Sum('quantity_sold'), total_revenue=Sum('total_price')
+    )
+
+    # Low Stock Products
+    low_stock_threshold = 10  # Example threshold for low stock
+    low_stock_products = []
+
+    for product in SupplierProduct.objects.all():
+        # Calculate remaining stock
+        quantity_supplied = product.stock_quantity
+        quantity_sold = Sale.objects.filter(supplier_product=product).aggregate(
+            total_sold=Sum('quantity_sold')
+        )['total_sold'] or 0
+        remaining_stock = quantity_supplied - quantity_sold
+
+        if remaining_stock < low_stock_threshold:
+            low_stock_products.append({
+                'product_name': product.name,
+                'remaining_stock': remaining_stock,
+            })
+
+    context = {
+        'daily_sales': daily_sales,
+        'weekly_sales': weekly_sales,
+        'monthly_sales': monthly_sales,
+        'low_stock_products': low_stock_products,
+    }
+
+    return render(request, 'manager_dashboard.html', context)
 
 
 
-# Owner Dashboard
+
+from django.shortcuts import render
+from django.db.models import Sum
+from datetime import datetime
+from .models import Sale
+
 def owner_dashboard(request):
-    today = datetime.now().date()
-    start_of_month = today.replace(day=1)
-    start_of_year = today.replace(month=1, day=1)
+    # Get the current date
+    today = datetime.now()
 
-    # Revenue and profit analysis
-    monthly_revenue = Sale.objects.filter(sale_date__date__gte=start_of_month).aggregate(total=Sum('total_price'))['total'] or 0
-    monthly_profit = Sale.objects.filter(sale_date__date__gte=start_of_month).aggregate(total=Sum('profit'))['total'] or 0
-    yearly_revenue = Sale.objects.filter(sale_date__date__gte=start_of_year).aggregate(total=Sum('total_price'))['total'] or 0
-    yearly_profit = Sale.objects.filter(sale_date__date__gte=start_of_year).aggregate(total=Sum('profit'))['total'] or 0
+    # Monthly Analysis
+    month_start = today.replace(day=1)
+    monthly_data = Sale.objects.filter(sale_date__date__gte=month_start).aggregate(
+        total_revenue=Sum('total_price'),
+        total_profit=Sum('profit')
+    )
+    monthly_revenue = monthly_data['total_revenue'] or 0
+    monthly_profit = monthly_data['total_profit'] or 0
+    monthly_loss = max(0, monthly_revenue - monthly_profit)  # Calculate loss if any
 
-    return render(request, "owner_dashboard.html", {
-        "monthly_revenue": monthly_revenue,
-        "monthly_profit": monthly_profit,
-        "yearly_revenue": yearly_revenue,
-        "yearly_profit": yearly_profit,
-    })
+    # Yearly Analysis
+    year_start = today.replace(month=1, day=1)
+    yearly_data = Sale.objects.filter(sale_date__date__gte=year_start).aggregate(
+        total_revenue=Sum('total_price'),
+        total_profit=Sum('profit')
+    )
+    yearly_revenue = yearly_data['total_revenue'] or 0
+    yearly_profit = yearly_data['total_profit'] or 0
+    yearly_loss = max(0, yearly_revenue - yearly_profit)  # Calculate loss if any
+
+    context = {
+        'monthly_revenue': monthly_revenue,
+        'monthly_profit': monthly_profit,
+        'monthly_loss': monthly_loss,
+        'yearly_revenue': yearly_revenue,
+        'yearly_profit': yearly_profit,
+        'yearly_loss': yearly_loss,
+    }
+
+    return render(request, 'owner_dashboard.html', context)
+
 
 
 from django.shortcuts import render
