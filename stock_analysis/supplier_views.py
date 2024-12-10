@@ -44,7 +44,7 @@ def update_supplier(request, pk):
         supplier.email = request.POST.get('email')
         supplier.address = request.POST.get('address')
         supplier.company = request.POST.get('company')
-        supplier.date = request.POST.get('date')
+        supplier.partnership_date = request.POST.get('date')
         supplier.save()
         return redirect('supplier_list')  # Replace 'supplier_list' with the name of your supplier list view
     return render(request, 'suppliers/update_supplier.html', {'supplier': supplier})

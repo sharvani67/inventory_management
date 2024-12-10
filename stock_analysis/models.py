@@ -17,7 +17,7 @@ class Supplier(models.Model):
 
 # SupplierProduct Model
 class SupplierProduct(models.Model):
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE)  # Link to Supplier
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE,null=True, blank=True)  # Link to Supplier
     name = models.CharField(max_length=100, default="Unknown Product")  # Default name
     category = models.CharField(max_length=50, blank=True, null=True)  # Product category
     selling_price_per_unit=models.DecimalField(default=0, max_digits=10, decimal_places=2, null=True, blank=True)
@@ -29,7 +29,7 @@ class SupplierProduct(models.Model):
         return f"{self.name} from {self.supplier.name}"
 
 class SellingPrice(models.Model):
-    supplier_product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE)
+    supplier_product = models.ForeignKey(SupplierProduct, on_delete=models.CASCADE,null=True, blank=True)
     our_selling_price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
     date_added = models.DateTimeField(auto_now_add=True)
 

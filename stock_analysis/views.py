@@ -3,12 +3,14 @@ from .models import SupplierProduct,Sale
 from django.shortcuts import render
 
 # Manager Dashboard
+
+# Manager Dashboard
 def manager_dashboard(request):
     today = datetime.now().date()
     start_of_week = today - timedelta(days=today.weekday())
     start_of_month = today.replace(day=1)
 
-    # Low stock warning
+    # Low stock warning logic (Low stock products from stock analysis)
     low_stock_products = SupplierProduct.objects.filter(stock_quantity__lt=10)
 
     # Sales data
@@ -22,6 +24,7 @@ def manager_dashboard(request):
         "weekly_sales": weekly_sales,
         "monthly_sales": monthly_sales,
     })
+
 
 
 # Owner Dashboard

@@ -30,7 +30,7 @@
                 <select class="form-select" name="supplier_product" id="product_select" required>
                     <option value="" disabled selected>Select a Product</option>
                     {% for product in supplier_products %}
-                    <option value="{{ product.name }}"
+                    <option value="{{ product.id }}"
                         data-supplier-price="{{ product.selling_price_per_unit }}"
                         data-our-price="{% if product.sellingprice_set.first %}{{ product.sellingprice_set.first.our_selling_price_per_unit }}{% else %}{{ product.selling_price_per_unit }}{% endif %}"
                         data-remaining-stock="{{ product.remaining_stock }}">

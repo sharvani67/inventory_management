@@ -3,9 +3,12 @@ from .models import SupplierProduct, Supplier
 from django.contrib import messages
 
 
-# Add or update product supplied by a supplier
+from django.shortcuts import render, redirect
+from .models import Supplier, SupplierProduct
+
 def add_supplier_product(request):
     suppliers = Supplier.objects.all()
+
     if request.method == "POST":
         supplier_id = request.POST.get("supplier")
         product_name = request.POST.get("product_name")
@@ -14,30 +17,22 @@ def add_supplier_product(request):
         cost_price = request.POST.get("cost_price")
         quantity_supplied = int(request.POST.get("quantity_supplied"))
 
-        supplier = get_object_or_404(Supplier, id=supplier_id)
+        supplier = Supplier.objects.get(id=supplier_id)
 
-        # Check if the product already exists for the supplier
-        supplier_product, created = SupplierProduct.objects.get_or_create(
+        # Create new SupplierProduct
+        SupplierProduct.objects.create(
             supplier=supplier,
             name=product_name,
-            defaults={
-                "category": category,
-                "selling_price_per_unit": selling_price_per_unit,
-                "cost_price": cost_price,
-                "stock_quantity": quantity_supplied,
-            }
+            category=category,
+            selling_price_per_unit=selling_price_per_unit,
+            cost_price=cost_price,
+            stock_quantity=quantity_supplied,
         )
-
-        if not created:
-            # Update stock if the product already exists
-            supplier_product.stock_quantity += quantity_supplied
-            supplier_product.selling_price_per_unit = selling_price_per_unit
-            supplier_product.cost_price = cost_price
-            supplier_product.save()
 
         return redirect("supplier_product_list")  # Redirect to supplier product list
 
     return render(request, "products/add_supplier_product.html", {"suppliers": suppliers})
+
 
 
 
