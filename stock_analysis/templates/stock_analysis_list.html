@@ -3,55 +3,33 @@
 {% block title %}Stock Analysis{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="mb-4">Stock Analysis</h2>
-
-    <!-- Stock Analysis Table -->
-    <div class="table-responsive">
-        <table class="table table-bordered table-striped" id="stockAnalysisTable">
-            <thead class="table-dark">
+<div class="container mt-5">
+    <h1 class="mb-4">Stock Analysis</h1>
+    
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity Supplied</th>
+                <th>Quantity Sold</th>
+                <th>Remaining Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in stock_analysis_data %}
                 <tr>
-                    <th>S.No</th>
-                    <th>Product</th>
-                    <th>Category</th>
-                    <!--<th>Supplier</th>-->
-                    <th>Quantity Supplied</th>
-                    <th>Quantity Sold</th>
-                    <th>Remaining Stock</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in stock_analysis %}
-                <tr>
-                    <td>{{ forloop.counter }}</td>  <!-- Serial Number -->
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.category }}</td>
-                   <!-- <td>{{ item.supplier }}</td>-->
+                    <td>{{ item.product_name }}</td>
                     <td>{{ item.quantity_supplied }}</td>
                     <td>{{ item.quantity_sold }}</td>
                     <td>{{ item.remaining_stock }}</td>
                 </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">No data available</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-
-{% block extra_scripts %}
-    <!-- Include DataTable CSS -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-
-    <!-- Include jQuery (required for DataTable) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Include DataTable JS -->
-    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-
-    <!-- Initialize DataTable -->
-    <script>
-        $(document).ready(function() {
-            $('#stockAnalysisTable').DataTable();
-        });
-    </script>
 {% endblock %}
-{% endblock %}
+

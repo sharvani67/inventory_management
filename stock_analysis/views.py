@@ -47,31 +47,37 @@ def owner_dashboard(request):
     })
 
 
+from django.shortcuts import render
+from .models import SupplierProduct, Sale
 from django.db.models import Sum
 
-def stock_analysis_list(request):
-    # Aggregate data by product name
-    supplier_products = SupplierProduct.objects.values(
-        'name',  # Group by product name
-        'category'  # Optional: Include category
-    ).annotate(
-        total_quantity_supplied=Sum('stock_quantity'),  # Sum stock for the product across suppliers
-        total_quantity_sold=Sum('sale__quantity_sold'),  # Sum sold quantities for the product
-    )
-    
-    # Prepare stock analysis data for rendering
-    stock_analysis = [
-        {
-            "name": sp["name"],
-            "category": sp["category"],
-            "quantity_supplied": sp["total_quantity_supplied"] or 0,  # Total quantity supplied for the product
-            "quantity_sold": sp["total_quantity_sold"] or 0,  # Total quantity sold for the product
-            "remaining_stock": (sp["total_quantity_supplied"] or 0) - (sp["total_quantity_sold"] or 0),
-        }
-        for sp in supplier_products
-    ]
 
-    return render(request, "stock_analysis_list.html", {"stock_analysis": stock_analysis})
+def stock_analysis_list(request):
+    # Get all the SupplierProduct instances
+    supplier_products = SupplierProduct.objects.all()
+
+    stock_analysis_data = []
+    
+    for supplier_product in supplier_products:
+        # Get total quantity supplied for the product (stock_quantity)
+        quantity_supplied = supplier_product.stock_quantity
+
+        # Get total quantity sold for the product
+        quantity_sold = Sale.objects.filter(supplier_product=supplier_product).aggregate(Sum('quantity_sold'))['quantity_sold__sum'] or 0
+
+        # Calculate remaining stock
+        remaining_stock = quantity_supplied - quantity_sold
+
+        # Create a dictionary for the stock analysis data
+        stock_analysis_data.append({
+            'product_name': supplier_product.name,  # Use 'name' field from SupplierProduct
+            'quantity_supplied': quantity_supplied,
+            'quantity_sold': quantity_sold,
+            'remaining_stock': remaining_stock,
+        })
+    
+    return render(request, 'stock_analysis_list.html', {'stock_analysis_data': stock_analysis_data})
+
 
 
 
