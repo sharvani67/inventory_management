@@ -3,8 +3,8 @@
 {% block title %}Add Selling Price{% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <h2 class="text-center mb-3" style="color: black">Add Selling Price</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-3" style="color: black">Add Own Selling Price</h2>
 
     <form method="POST" class="needs-validation shadow-sm p-3 bg-light rounded" novalidate>
         {% csrf_token %}
@@ -36,7 +36,7 @@
 
         <!-- Submit Button -->
         <div class="d-flex justify-content-center gap-3 mt-3">
-            <button type="submit" href="{% url 'selling_price_list' %}" class="btn btn-primary btn-sm-2">Add Selling Price</button>
+            <button type="submit" href="{% url 'selling_price_list' %}" class="btn btn-primary btn-sm-2">Add  Own Selling Price</button>
             
         </div>
     </form>

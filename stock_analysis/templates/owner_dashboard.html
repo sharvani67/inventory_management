@@ -4,8 +4,8 @@
 
 {% block content %}
 
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Owner Dashboard</h1>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Owner Dashboard</h2>
 
     <!-- Monthly Analysis Section -->
     <div class="card mb-4">
@@ -13,9 +13,8 @@
             <h4>Monthly Analysis</h4>
         </div>
         <div class="card-body">
-            <p><strong>Total Revenue:</strong> ${{ monthly_revenue|floatformat:2 }}</p>
-            <p><strong>Total Profit:</strong> ${{ monthly_profit|floatformat:2 }}</p>
-            <p><strong>Total Loss:</strong> ${{ monthly_loss|floatformat:2 }}</p>
+            <p><strong>Total Revenue:</strong> ₹{{ monthly_revenue|floatformat:2 }}</p>
+            <p><strong>Total Profit:</strong> ₹{{ monthly_profit|floatformat:2 }}</p>
         </div>
     </div>
 
@@ -25,9 +24,8 @@
             <h4>Yearly Analysis</h4>
         </div>
         <div class="card-body">
-            <p><strong>Total Revenue:</strong> ${{ yearly_revenue|floatformat:2 }}</p>
-            <p><strong>Total Profit:</strong> ${{ yearly_profit|floatformat:2 }}</p>
-            <p><strong>Total Loss:</strong> ${{ yearly_loss|floatformat:2 }}</p>
+            <p><strong>Total Revenue:</strong> ₹{{ yearly_revenue|floatformat:2 }}</p>
+            <p><strong>Total Profit:</strong> ₹{{ yearly_profit|floatformat:2 }}</p>
         </div>
     </div>
 </div>

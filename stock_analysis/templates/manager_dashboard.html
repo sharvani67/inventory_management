@@ -4,39 +4,47 @@
 
 {% block content %}
 
-    <div class="container mt-5">
-        <h1 class="mb-4 text-center">Manager Dashboard</h1>
+    <div class="container mt-4">
+        <h2 class="mb-4 text-center">Manager Dashboard</h2>
 
         <!-- Sales Analysis Section -->
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card text-white bg-primary mb-3">
-                    <div class="card-header">Daily Sales</div>
-                    <div class="card-body">
-                        <h5 class="card-title">Total Sales: {{ daily_sales.total_sales|default:0 }}</h5>
-                        <p class="card-text">Total Revenue: ${{ daily_sales.total_revenue|floatformat:2|default:0 }}</p>
+        
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card text-white bg-primary mb-3">
+                        <div class="card-header" style="background-color: #004085; font-weight: bold; font-size: 1.2rem; text-align: center; padding: 10px;">
+                            Daily Sales
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Total Sales: {{ daily_sales.total_sales|default:0 }}</h5>
+                            <p class="card-text">Total Revenue: ₹{{ daily_sales.total_revenue|floatformat:2|default:0 }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-success mb-3">
+                        <div class="card-header" style="background-color: #155724; font-weight: bold; font-size: 1.2rem; text-align: center; padding: 10px;">
+                            Weekly Sales
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Total Sales: {{ weekly_sales.total_sales|default:0 }}</h5>
+                            <p class="card-text">Total Revenue: ₹{{ weekly_sales.total_revenue|floatformat:2|default:0 }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-white bg-info mb-3">
+                        <div class="card-header" style="background-color: #0c5460; font-weight: bold; font-size: 1.2rem; text-align: center; padding: 10px;">
+                            Monthly Sales
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Total Sales: {{ monthly_sales.total_sales|default:0 }}</h5>
+                            <p class="card-text">Total Revenue: ₹{{ monthly_sales.total_revenue|floatformat:2|default:0 }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-success mb-3">
-                    <div class="card-header">Weekly Sales</div>
-                    <div class="card-body">
-                        <h5 class="card-title">Total Sales: {{ weekly_sales.total_sales|default:0 }}</h5>
-                        <p class="card-text">Total Revenue: ${{ weekly_sales.total_revenue|floatformat:2|default:0 }}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-white bg-info mb-3">
-                    <div class="card-header">Monthly Sales</div>
-                    <div class="card-body">
-                        <h5 class="card-title">Total Sales: {{ monthly_sales.total_sales|default:0 }}</h5>
-                        <p class="card-text">Total Revenue: ${{ monthly_sales.total_revenue|floatformat:2|default:0 }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+
 
         <!-- Low Stock Products Section -->
         <h2 class="mt-5">Low Stock Products</h2>
