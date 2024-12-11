@@ -14,7 +14,7 @@
     </div>
 
     <div class="table-responsive">
-        <table id="supplierTable" class="table table-striped table-hover table-bordered">
+        <table id="supplierTable" class="table table-striped table-hover table-bordered mb-3">
             <thead class="table-dark">
                 <tr>
                     <th>S.No</th>
@@ -80,4 +80,9 @@
         });
     });
 </script>
+<style>
+    #supplierTable_wrapper .dataTables_filter {
+    margin-bottom: 20px; /* Adjust the gap as needed */
+}
+</style>
 {% endblock %}

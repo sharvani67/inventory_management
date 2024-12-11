@@ -48,8 +48,8 @@
     <div class="row mt-5">
         <!-- Low Stock Table -->
         <div class="col-md-8">
-            <h4>Low Stock Products</h4>
-            <table class="table table-bordered text-center">
+            <h4 style="color:#004085;">Low Stock Products</h4>
+            <table id="lowStock" class="table table-bordered text-center mb-2">
                 <thead class="table-dark">
                     <tr>
                         <th>Product Name</th>
@@ -85,5 +85,25 @@
         </div>        
     </div>
 </div>
+<!-- DataTables CSS and JS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#lowStock').DataTable({
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true,
+            "autoWidth": false
+        });
+    });
+</script>
+<style>
+    #lowStock_wrapper .dataTables_filter {
+    margin-bottom: 15px; /* Adjust the gap as needed */
+}
+</style>
 
 {% endblock %}

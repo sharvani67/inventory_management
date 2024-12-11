@@ -7,7 +7,7 @@
     <h1 class="mb-4">Stock Analysis</h1>
 
     <div class="table-responsive">
-        <table id="stockAnalysisTable" class="table table-striped table-hover table-bordered">
+        <table id="stockAnalysisTable" class="table table-striped table-hover table-bordered mb-3">
             <thead class="table-dark">
                 <tr>
                     <th>Product</th>
@@ -49,5 +49,10 @@
         });
     });
 </script>
+<style>
+    #stockAnalysisTable_wrapper .dataTables_filter {
+    margin-bottom: 20px; /* Adjust the gap as needed */
+}
+</style>
 
 {% endblock %}

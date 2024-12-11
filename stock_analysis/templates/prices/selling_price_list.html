@@ -11,7 +11,7 @@
     </div>
     <!-- Table to display selling prices -->
     <div class="table-responsive">
-        <table id="sellingPriceTable" class="table table-striped table-hover table-bordered">
+        <table id="sellingPriceTable" class="table table-striped table-hover table-bordered mb-3">
             <thead class="table-dark">
                 <tr>
                     <th>S.No</th> <!-- Renamed from "#" for consistency -->
@@ -67,6 +67,11 @@
             });
         });
     </script>
+    <style>
+        #sellingPriceTable_wrapper .dataTables_filter {
+        margin-bottom: 20px; /* Adjust the gap as needed */
+    }
+    </style>
     
     <!-- Back Button 
     <div class="d-flex justify-content-center mt-3">
