@@ -14,55 +14,57 @@
     </div>
 
     <!-- Supplier Table -->
-    <table id="supplierTable" class="table table-striped table-hover table-bordered mb-3">
-        <thead class="table-dark">
-            <tr>
-                <th>S.No</th>
-                <th>Name</th>
-                <th>Contact</th>
-                <th>Email</th>
-                <th>Address</th>
-                <th>Company</th>
-                <th>Partnership Date</th>
-                {% if request.session.user_role == "admin" %}
-                <th>Actions</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-            {% for supplier in suppliers %}
-            <tr>
-                <td>{{ forloop.counter }}</td>  <!-- Serial Number -->
-                <td>{{ supplier.name }}</td>
-                <td>{{ supplier.contact }}</td>
-                <td>{{ supplier.email }}</td>
-                <td>{{ supplier.address }}</td>
-                <td>{{ supplier.company }}</td>
-                <td>{{ supplier.partnership_date }}</td>
-                {% if request.session.user_role == "admin" %}
-                <td class="d-flex">
-                    <!-- Edit Button with Icon -->
-                    <a href="{% url 'update_supplier' supplier.id %}" class="btn btn-warning btn-sm me-2 d-flex align-items-center">
-                        <i class="fas fa-edit me-1"></i> 
-                    </a>
-                
-                    <!-- Delete Button with Icon -->
-                    <form action="{% url 'delete_supplier' supplier.id %}" method="POST" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center" onclick="return confirm('Are you sure you want to delete this supplier?');">
-                            <i class="fas fa-trash me-1"></i> 
-                        </button>
-                    </form>
-                </td>
-                {% endif %}                
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="6" class="text-center">No suppliers found.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table id="supplierTable" class="table table-striped table-hover table-bordered mb-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>S.No</th>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Email</th>
+                    <th>Address</th>
+                    <th>Company</th>
+                    <th>Partnership Date</th>
+                    {% if request.session.user_role == "admin" %}
+                    <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for supplier in suppliers %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>  <!-- Serial Number -->
+                    <td>{{ supplier.name }}</td>
+                    <td>{{ supplier.contact }}</td>
+                    <td>{{ supplier.email }}</td>
+                    <td>{{ supplier.address }}</td>
+                    <td>{{ supplier.company }}</td>
+                    <td>{{ supplier.partnership_date }}</td>
+                    {% if request.session.user_role == "admin" %}
+                    <td class="d-flex">
+                        <!-- Edit Button with Icon -->
+                        <a href="{% url 'update_supplier' supplier.id %}" class="btn btn-warning btn-sm me-2 d-flex align-items-center">
+                            <i class="fas fa-edit me-1"></i> 
+                        </a>
+                    
+                        <!-- Delete Button with Icon -->
+                        <form action="{% url 'delete_supplier' supplier.id %}" method="POST" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center" onclick="return confirm('Are you sure you want to delete this supplier?');">
+                                <i class="fas fa-trash me-1"></i> 
+                            </button>
+                        </form>
+                    </td>
+                    {% endif %}                
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="text-center">No suppliers found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>   
 </div>
 
 <!-- Add Supplier Modal -->
