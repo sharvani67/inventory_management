@@ -8,9 +8,11 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Supplier Products List</h2>
         <!-- Add Product Button (Top right corner) -->
+        {% if request.session.user_role == "admin" %}
         <a href="{% url 'add_supplier_product' %}" class="btn btn-primary">
             Add New Product
         </a>
+        {% endif %}
     </div>
 
     <div class="table-responsive">
@@ -25,7 +27,9 @@
                     <th>Cost Price</th>
                     <th>Selling Price</th>
                     <th>Supplied Date</th>
+                    {% if request.session.user_role == "admin" %}
                     <th>Actions</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +43,7 @@
                     <td>₹{{ sp.cost_price }}</td>
                     <td>₹{{ sp.selling_price_per_unit }}</td>
                     <td>{{ sp.supplied_date }}</td>
+                    {% if request.session.user_role == "admin" %}
                     <td class="d-flex">
                         <!-- Edit Button with Icon -->
                         <a href="{% url 'update_supplier_product' sp.id %}" class="btn btn-warning btn-sm me-2 d-flex align-items-center">
@@ -53,6 +58,7 @@
                             </button>
                         </form>
                     </td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>

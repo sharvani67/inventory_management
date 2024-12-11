@@ -7,7 +7,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Sales List</h2>
         <!-- Add Sale Button -->
+        {% if request.session.user_role == "admin" %}
         <a href="{% url 'add_sale' %}" class="btn btn-primary">Add Sale</a>
+        {% endif %}
     </div>
 
     <!-- Sales Table with DataTable functionality -->
@@ -20,9 +22,13 @@
                     <th>Quantity Sold</th>
                     <th>Our Selling Price per Unit</th>
                     <th>Total Price</th>
+                    {% if request.session.user_role == "owner" %}
                     <th>Profit</th>
+                    {% endif %}
                     <th>Sale Date</th>
+                    {% if request.session.user_role == "admin" %}
                     <th>Actions</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -33,8 +39,11 @@
                     <td>{{ sale.quantity_sold }}</td>
                     <td>₹{{ sale.our_selling_price_per_unit }}</td>
                     <td>₹{{ sale.total_price }}</td>
+                    {% if request.session.user_role == "owner" %}
                     <td>₹{{ sale.profit }}</td>
+                    {% endif %}
                     <td>{{ sale.sale_date }}</td>
+                    {% if request.session.user_role == "admin" %}
                     <td class="d-flex">
                         <!-- Edit Button with Icon -->
                         <a href="{% url 'update_sale' sale.id %}" class="btn btn-warning btn-sm me-2 d-flex align-items-center">
@@ -49,6 +58,7 @@
                             </button>
                         </form>
                     </td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>

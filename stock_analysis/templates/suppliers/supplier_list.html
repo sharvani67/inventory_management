@@ -8,7 +8,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Supplier List</h2>
         <!-- Add Supplier Button -->
+        {% if request.session.user_role == "admin" %}
         <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSupplierModal">Add Supplier</button>
+        {% endif %}
     </div>
 
     <!-- Supplier Table -->
@@ -22,7 +24,9 @@
                 <th>Address</th>
                 <th>Company</th>
                 <th>Partnership Date</th>
+                {% if request.session.user_role == "admin" %}
                 <th>Actions</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -35,6 +39,7 @@
                 <td>{{ supplier.address }}</td>
                 <td>{{ supplier.company }}</td>
                 <td>{{ supplier.partnership_date }}</td>
+                {% if request.session.user_role == "admin" %}
                 <td class="d-flex">
                     <!-- Edit Button with Icon -->
                     <a href="{% url 'update_supplier' supplier.id %}" class="btn btn-warning btn-sm me-2 d-flex align-items-center">
@@ -48,7 +53,8 @@
                             <i class="fas fa-trash me-1"></i> 
                         </button>
                     </form>
-                </td>                
+                </td>
+                {% endif %}                
             </tr>
             {% empty %}
             <tr>

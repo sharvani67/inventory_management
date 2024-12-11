@@ -7,7 +7,9 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Selling Price List</h2>
         <!-- Add Sale Button -->
+        {% if request.session.user_role == "admin" %}
         <a href="{% url 'add_selling_price' %}" class="btn btn-primary">Add own Selling Price</a>
+        {% endif %}
     </div>
     <!-- Table to display selling prices -->
     <div class="table-responsive">
@@ -19,7 +21,9 @@
                     <th>Category</th>
                     <th>Selling Price (₹ per unit)</th> <!-- Added ₹ for currency -->
                     <th>Date Added</th>
+                    {% if request.session.user_role == "admin" %}
                     <th>Actions</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -30,6 +34,8 @@
                         <td>{{ price.supplier_product.category }}</td>
                         <td>₹{{ price.our_selling_price_per_unit }}</td> <!-- Display price in rupees -->
                         <td>{{ price.date_added|date:"Y-m-d H:i:s" }}</td>
+
+                        {% if request.session.user_role == "admin" %}
                         <td class="d-flex">
                             <!-- Edit Button with Icon -->
                             <a href="{% url 'update_selling_price' price.id %}" class="btn btn-warning btn-sm me-2 d-flex align-items-center">
@@ -44,6 +50,7 @@
                                 </button>
                             </form>
                         </td>
+                        {% endif %}
                     </tr>
                 {% empty %}
                     <tr>
