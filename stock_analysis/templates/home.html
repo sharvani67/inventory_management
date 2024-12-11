@@ -40,8 +40,67 @@
                 color: #FFFFFF !important; /* White text */
                 transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
             }
+            /* Card Customization */
+            .card {
+                border: none;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+            }
+            .card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            }
+            .card-body {
+                padding: 1.5rem;
+            }
+            .card-title {
+                font-weight: bold;
+                font-size: 1.25rem;
+            }
+            /* Card Backgrounds */
+            .card.stock-analysis {
+                background-color: #F5F5F5;
+                color: #333;
+            }
+            .card.suppliers {
+                background-color: #D1E8E2;
+                color: #004D40;
+            }
+            .card.products {
+                background-color: #FFEB3B;
+                color: #F57F17;
+            }
+            .card.sales {
+                background-color: #FF5722;
+                color: #FFF;
+            }
+            .card.customers {
+                background-color: #2196F3;
+                color: #FFF;
+            }
+            .card.selling-prices {
+                background-color: #8BC34A;
+                color: #FFF;
+            }
+            /* Card Hover Effects */
+            .card.stock-analysis:hover {
+                background-color: #E8E8E8;
+            }
+            .card.suppliers:hover {
+                background-color: #B2DFDB;
+            }
+            .card.products:hover {
+                background-color: #FBC02D;
+            }
+            .card.sales:hover {
+                background-color: #FF7043;
+            }
+            .card.customers:hover {
+                background-color: #42A5F5;
+            }
+            .card.selling-prices:hover {
+                background-color: #7CB342;
+            }
         </style>
-        
     </head>
     <body>
         <!-- Navigation Bar -->
@@ -85,86 +144,82 @@
             </div>
         </nav>
 
-    
-    <!-- Welcome Section -->
-    <header class=" text-dark text-center py-4" style="background-color: #FAF6E3;">
-        <div class="container">
-            <h1>Welcome to the Inventory Management System</h1>
-            <p class="lead">Track, manage, and grow your business efficiently.</p>
+        <!-- Welcome Section -->
+        <header class=" text-dark text-center py-4" style="background-color: #FAF6E3;">
+            <div class="container">
+                <h1>Welcome to the Inventory Management System</h1>
+                <p class="lead">Track, manage, and grow your business efficiently.</p>
+            </div>
+        </header>
+
+        <!-- Role-Specific Options -->
+        <div class="container my-5">
+            <div class="row text-center">
+                <div class="col-md-4 mb-4">
+                    <div class="card stock-analysis">
+                        <div class="card-body">
+                            <h5 class="card-title">Stock Analysis</h5>
+                            <p class="card-text">Monitor inventory trends, evaluate stock movement, and ensure optimal stock levels for efficient operations.</p>
+                            <a href="{% url 'stock_analysis_list' %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card suppliers">
+                        <div class="card-body">
+                            <h5 class="card-title">Suppliers</h5>
+                            <p class="card-text">Manage supplier details, track provided products, and maintain a reliable supply chain for your inventory.</p>
+                            <a href="{% url 'supplier_list' %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card products">
+                        <div class="card-body">
+                            <h5 class="card-title">Products</h5>
+                            <p class="card-text">View and manage all products supplied by vendors, track inventory levels, and ensure accurate stock information.</p>
+                            <a href="{% url 'supplier_product_list' %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card sales">
+                        <div class="card-body">
+                            <h5 class="card-title">Sales</h5>
+                            <p class="card-text">Track all sales transactions, analyze trends, and monitor revenue to ensure business growth.</p>
+                            <a href="{% url 'sales_list' %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card customers">
+                        <div class="card-body">
+                            <h5 class="card-title">Customers</h5>
+                            <p class="card-text">Manage customer details, review purchase history, and build stronger relationships for sustained growth.</p>
+                            <a href="{% url 'customer_list' %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card selling-prices">
+                        <div class="card-body">
+                            <h5 class="card-title">Selling Prices</h5>
+                            <p class="card-text">Manage and view all the selling prices for your products. Keep track of price changes and updates easily.</p>
+                            <a href="{% url 'selling_price_list' %}" class="btn btn-primary">View</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </header>
 
-
-
-    <!-- Role-Specific Options -->
-    <div class="container my-5">
-        <div class="row text-center">
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Stock Analysis</h5>
-                        <p class="card-text">Monitor inventory trends, evaluate stock movement, and ensure optimal stock levels for efficient operations.</p>
-                        <a href="{% url 'stock_analysis_list' %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Suppliers</h5>
-                        <p class="card-text">Manage supplier details, track provided products, and maintain a reliable supply chain for your inventory.</p>
-                        <a href="{% url 'supplier_list' %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Products</h5>
-                        <p class="card-text">View and manage all products supplied by vendors, track inventory levels, and ensure accurate stock information.</p>
-                        <a href="{% url 'supplier_product_list' %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Sales</h5>
-                        <p class="card-text">Track all sales transactions, analyze trends, and monitor revenue to ensure business growth.</p>
-                        <a href="{% url 'sales_list' %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Customers</h5>
-                        <p class="card-text">Manage customer details, review purchase history, and build stronger relationships for sustained growth.</p>
-                        <a href="{% url 'customer_list' %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Selling Prices</h5>
-                        <p class="card-text">Manage and view all the selling prices for your products. Keep track of price changes and updates easily.</p>
-                        <a href="{% url 'selling_price_list' %}" class="btn btn-primary">View</a>
-                    </div>
-                </div>
-            </div>
-            
-            
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-3">
-        <p>&copy; 2024 Inventory Management System. All rights reserved.</p>
-    </footer>
-</body>
+        <!-- Footer -->
+        <footer class="bg-dark text-white text-center py-3">
+            <p>&copy; 2024 Inventory Management System. All rights reserved.</p>
+        </footer>
+    </body>
 </html>

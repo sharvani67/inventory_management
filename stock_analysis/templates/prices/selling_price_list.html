@@ -19,6 +19,7 @@
                     <th>Category</th>
                     <th>Selling Price (₹ per unit)</th> <!-- Added ₹ for currency -->
                     <th>Date Added</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +30,20 @@
                         <td>{{ price.supplier_product.category }}</td>
                         <td>₹{{ price.our_selling_price_per_unit }}</td> <!-- Display price in rupees -->
                         <td>{{ price.date_added|date:"Y-m-d H:i:s" }}</td>
+                        <td class="d-flex">
+                            <!-- Edit Button with Icon -->
+                            <a href="{% url 'update_selling_price' price.id %}" class="btn btn-warning btn-sm me-2 d-flex align-items-center">
+                                <i class="fas fa-edit me-1"></i> 
+                            </a>
+    
+                            <!-- Delete Button with Icon -->
+                            <form action="{% url 'delete_selling_price' price.id %}" method="POST" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center" onclick="return confirm('Are you sure you want to delete selling price?');">
+                                    <i class="fas fa-trash me-1"></i> 
+                                </button>
+                            </form>
+                        </td>
                     </tr>
                 {% empty %}
                     <tr>

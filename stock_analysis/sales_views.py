@@ -83,9 +83,47 @@ def add_sale(request):
 
 
 
-
-
 # List all sales
 def sales_list(request):
     sales = Sale.objects.select_related("supplier_product__supplier")
     return render(request, "sales/sales_list.html", {"sales": sales})
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Sale  # Adjust based on your app name
+
+def update_sale(request, sale_id):
+    sale = get_object_or_404(Sale, id=sale_id)
+    supplier_products = SupplierProduct.objects.all()
+
+    if request.method == "POST":
+        # Get form data
+        sale.customer_name = request.POST["customer_name"]
+        sale.customer_mobile = request.POST["customer_mobile"]
+        product_id = request.POST["supplier_product"]
+        sale.supplier_product = get_object_or_404(SupplierProduct, id=product_id)
+        sale.quantity_sold = int(request.POST["quantity_sold"])
+        sale.our_selling_price_per_unit = float(request.POST["our_selling_price_per_unit"])
+
+        # Update total price
+        sale.total_price = sale.quantity_sold * sale.our_selling_price_per_unit
+
+        # Save the sale
+        sale.save()
+        return redirect("sales_list")  # Redirect to the sales list after updating
+
+    return render(request, "sales/update_sale.html", {"sale": sale, "supplier_products": supplier_products})
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Sale
+
+def delete_sale(request, sale_id):
+    """
+    View to delete a sale record directly.
+    """
+    sale = get_object_or_404(Sale, id=sale_id)
+    sale.delete()
+    messages.success(request, "Sale record deleted successfully!")
+    return redirect('sales_list')
+

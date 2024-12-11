@@ -49,3 +49,47 @@ def selling_price_list(request):
     return render(request, 'prices/selling_price_list.html', {
         'selling_prices': selling_prices
     })
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import SellingPrice, SupplierProduct
+
+def update_selling_price(request, selling_price_id):
+    """
+    View to update an existing selling price.
+    """
+    selling_price = get_object_or_404(SellingPrice, id=selling_price_id)
+    supplier_products = SupplierProduct.objects.all()
+
+    if request.method == 'POST':
+        supplier_product_id = request.POST.get('supplier_product')
+        our_selling_price_per_unit = request.POST.get('our_selling_price_per_unit')
+
+        if supplier_product_id and our_selling_price_per_unit:
+            selling_price.supplier_product_id = supplier_product_id
+            selling_price.our_selling_price_per_unit = our_selling_price_per_unit
+            selling_price.save()
+            messages.success(request, "Selling price updated successfully!")
+            return redirect('selling_price_list')
+        else:
+            messages.error(request, "Please fill all required fields.")
+
+    return render(request, 'prices/update_selling_price.html', {
+        'selling_price': selling_price,
+        'supplier_products': supplier_products,
+    })
+
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import SellingPrice
+
+def delete_selling_price(request, selling_price_id):
+    """
+    View to delete a selling price record.
+    """
+    selling_price = get_object_or_404(SellingPrice, id=selling_price_id)
+    selling_price.delete()
+    messages.success(request, "Selling price deleted successfully!")
+    return redirect('selling_price_list')
