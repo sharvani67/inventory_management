@@ -85,7 +85,7 @@ def add_sale(request):
 
 # List all sales
 def sales_list(request):
-    sales = Sale.objects.select_related("supplier_product__supplier")
+    sales = Sale.objects.select_related("supplier_product__supplier").order_by("-sale_date")
     return render(request, "sales/sales_list.html", {"sales": sales})
 
 from django.shortcuts import render, get_object_or_404, redirect

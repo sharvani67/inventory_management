@@ -38,8 +38,9 @@ def add_supplier_product(request):
 
 # List all products supplied by suppliers
 def supplier_product_list(request):
-    supplier_products = SupplierProduct.objects.select_related("supplier")
+    supplier_products = SupplierProduct.objects.select_related("supplier").order_by("-supplied_date")  # Latest entries first
     return render(request, "products/supplier_product_list.html", {"supplier_products": supplier_products})
+
 
 
 

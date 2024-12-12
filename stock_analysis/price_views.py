@@ -43,7 +43,7 @@ from .models import SellingPrice
 
 def selling_price_list(request):
     # Fetch all selling prices
-    selling_prices = SellingPrice.objects.select_related('supplier_product', 'supplier_product__supplier').all()
+    selling_prices = SellingPrice.objects.select_related('supplier_product', 'supplier_product__supplier').all().order_by("-date_added")
     
     # Pass the selling prices to the template
     return render(request, 'prices/selling_price_list.html', {

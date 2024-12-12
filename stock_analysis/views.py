@@ -144,7 +144,7 @@ from .models import Sale
 
 def customer_list(request):
     # Fetch all sales records, you can filter or order them if needed
-    sales = Sale.objects.all()
+    sales = Sale.objects.all().order_by("-sale_date")
     
     return render(request, 'customers_list.html', {'sales': sales})
 

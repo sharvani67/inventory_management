@@ -26,7 +26,7 @@ def add_supplier(request):
 
 # View to list all suppliers
 def supplier_list(request):
-    suppliers = Supplier.objects.all()
+    suppliers = Supplier.objects.all().order_by("-partnership_date") 
     return render(request, "suppliers/supplier_list.html", {"suppliers": suppliers})
 
 
